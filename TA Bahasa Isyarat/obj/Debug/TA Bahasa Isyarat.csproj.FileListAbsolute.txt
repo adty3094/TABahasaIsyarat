@@ -1,1 +1,18 @@
 D:\Kinect Dev\TA Bahasa Isyarat\TA Bahasa Isyarat\bin\Debug\TA Bahasa Isyarat.exe.config
+D:\Kinect Dev\TA Bahasa Isyarat\TA Bahasa Isyarat\bin\Debug\TA Bahasa Isyarat.exe
+D:\Kinect Dev\TA Bahasa Isyarat\TA Bahasa Isyarat\bin\Debug\TA Bahasa Isyarat.pdb
+D:\Kinect Dev\TA Bahasa Isyarat\TA Bahasa Isyarat\bin\Debug\Microsoft.Kinect.dll
+D:\Kinect Dev\TA Bahasa Isyarat\TA Bahasa Isyarat\bin\Debug\Microsoft.Samples.Kinect.WpfViewers.dll
+D:\Kinect Dev\TA Bahasa Isyarat\TA Bahasa Isyarat\bin\Debug\Microsoft.Samples.Kinect.WpfViewers.pdb
+D:\Kinect Dev\TA Bahasa Isyarat\TA Bahasa Isyarat\bin\Debug\Microsoft.Kinect.xml
+D:\Kinect Dev\TA Bahasa Isyarat\TA Bahasa Isyarat\obj\Debug\TA Bahasa Isyarat.csprojResolveAssemblyReference.cache
+D:\Kinect Dev\TA Bahasa Isyarat\TA Bahasa Isyarat\obj\Debug\MainWindow.g.cs
+D:\Kinect Dev\TA Bahasa Isyarat\TA Bahasa Isyarat\obj\Debug\App.g.cs
+D:\Kinect Dev\TA Bahasa Isyarat\TA Bahasa Isyarat\obj\Debug\TA Bahasa Isyarat_MarkupCompile.cache
+D:\Kinect Dev\TA Bahasa Isyarat\TA Bahasa Isyarat\obj\Debug\TA Bahasa Isyarat_MarkupCompile.lref
+D:\Kinect Dev\TA Bahasa Isyarat\TA Bahasa Isyarat\obj\Debug\MainWindow.baml
+D:\Kinect Dev\TA Bahasa Isyarat\TA Bahasa Isyarat\obj\Debug\TA Bahasa Isyarat.g.resources
+D:\Kinect Dev\TA Bahasa Isyarat\TA Bahasa Isyarat\obj\Debug\TA_Bahasa_Isyarat.Properties.Resources.resources
+D:\Kinect Dev\TA Bahasa Isyarat\TA Bahasa Isyarat\obj\Debug\TA Bahasa Isyarat.csproj.GenerateResource.Cache
+D:\Kinect Dev\TA Bahasa Isyarat\TA Bahasa Isyarat\obj\Debug\TA Bahasa Isyarat.exe
+D:\Kinect Dev\TA Bahasa Isyarat\TA Bahasa Isyarat\obj\Debug\TA Bahasa Isyarat.pdb
