@@ -29,7 +29,7 @@ namespace TA_Bahasa_Isyarat
         bool closing = false;
         const int skeletonCount = 6;
         Skeleton[] allSkeletons = new Skeleton[skeletonCount];
-        const string path = "D://TA//Data//";
+        const string path = "..\\..\\..\\DataSet\\";
         private string filename;
         bool result;
         int phase;
