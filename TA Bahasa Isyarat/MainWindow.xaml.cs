@@ -183,7 +183,7 @@ namespace TA_Bahasa_Isyarat
             phase++;
 
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine(String.Format("@relation {0}", filename.Split('.')[0]));
+            sb.AppendLine("@relation gesture");
             sb.AppendLine("@attribute ERSRX real");
             sb.AppendLine("@attribute ERSRY real");
             sb.AppendLine("@attribute ERSRZ real");
@@ -216,6 +216,20 @@ namespace TA_Bahasa_Isyarat
 
             int progress = 0;
             (sender as BackgroundWorker).ReportProgress(progress);
+            Vector3 SRER = new Vector3();
+            Vector3 ERWR = new Vector3();
+            Vector3 WRHR = new Vector3();
+            Vector3 SLEL = new Vector3();
+            Vector3 ELWL = new Vector3();
+            Vector3 WLHL = new Vector3();
+            Vector3 HRHL = new Vector3();
+            double SCSRER = new double();
+            double SRERWR = new double();
+            double ERWRHR = new double();
+            double SCSLEL = new double();
+            double SLELWL = new double();
+            double ELWLHL = new double();
+            double DisHRHL = new double();
             for (int i = 0; i < 10; i++)
             {
                 progress += 10;
@@ -232,26 +246,17 @@ namespace TA_Bahasa_Isyarat
                 //Center Body
                 SC.SetVector(first.Joints[JointType.ShoulderCenter].Position);
                 Head.SetVector(first.Joints[JointType.Head].Position);
-
-                Vector3 tmp;
-                tmp = ER - SR;
-                sb.Append(String.Format("{0};{1};{2};", tmp.X.ToString("0.00000"), tmp.Y.ToString("0.00000"), tmp.Z.ToString("0.00000")));
-                tmp = WR - ER;
-                sb.Append(String.Format("{0};{1};{2};", tmp.X.ToString("0.00000"), tmp.Y.ToString("0.00000"), tmp.Z.ToString("0.00000")));
-                tmp = HR - WR;
-                sb.Append(String.Format("{0};{1};{2};", tmp.X.ToString("0.00000"), tmp.Y.ToString("0.00000"), tmp.Z.ToString("0.00000")));
-                tmp = EL - SL;
-                sb.Append(String.Format("{0};{1};{2};", tmp.X.ToString("0.00000"), tmp.Y.ToString("0.00000"), tmp.Z.ToString("0.00000")));
-                tmp = WL - EL;
-                sb.Append(String.Format("{0};{1};{2};", tmp.X.ToString("0.00000"), tmp.Y.ToString("0.00000"), tmp.Z.ToString("0.00000")));
-                tmp = HL - WL;
-                sb.Append(String.Format("{0};{1};{2};", tmp.X.ToString("0.00000"), tmp.Y.ToString("0.00000"), tmp.Z.ToString("0.00000")));
-                tmp = HL - HR;
-                sb.Append(String.Format("{0};{1};{2};", tmp.X.ToString("0.00000"), tmp.Y.ToString("0.00000"), tmp.Z.ToString("0.00000")));
+                
+                SRER += ER - SR;
+                ERWR += WR - ER;
+                WRHR += HR - WR;
+                SLEL += EL - SL;
+                ELWL += WL - EL;
+                WLHL += HL - WL;
+                HRHL += HL - HR;
 
                 Vector3 v1, v2;
                 double res;
-                double angle;
 
                 //SC-SR-ER
                 v1 = SC - SR;
@@ -259,9 +264,7 @@ namespace TA_Bahasa_Isyarat
                 v2 = ER - SR;
                 v2 = v2.Normalize();
                 res = Vector3.DotProduct(v1, v2);
-                angle = Math.Acos(res);
-                sb.Append(angle.ToString("0.00000") + ";");
-                //SC_SR_ER.Content = angle.ToString("0.00000");
+                SCSRER = Math.Acos(res);
 
                 //SR-ER-WR
                 v1 = SR - ER;
@@ -269,9 +272,7 @@ namespace TA_Bahasa_Isyarat
                 v2 = WR - ER;
                 v2 = v2.Normalize();
                 res = Vector3.DotProduct(v1, v2);
-                angle = Math.Acos(res);
-                sb.Append(angle.ToString("0.00000") + ";");
-                //SR_ER_WR.Content = angle.ToString("0.00");
+                SRERWR = Math.Acos(res);
 
                 //ER-WR-HR
                 v1 = ER - WR;
@@ -279,9 +280,7 @@ namespace TA_Bahasa_Isyarat
                 v2 = HR - WR;
                 v2 = v2.Normalize();
                 res = Vector3.DotProduct(v1, v2);
-                angle = Math.Acos(res);
-                sb.Append(angle.ToString("0.00000") + ";");
-                //ER_WR_HR.Content = angle.ToString("0.00");
+                ERWRHR = Math.Acos(res);
 
                 //SC-SL-EL
                 v1 = SC - SL;
@@ -289,9 +288,7 @@ namespace TA_Bahasa_Isyarat
                 v2 = EL - SL;
                 v2 = v2.Normalize();
                 res = Vector3.DotProduct(v1, v2);
-                angle = Math.Acos(res);
-                sb.Append(angle.ToString("0.00000") + ";");
-                //SC_SL_EL.Content = angle.ToString("0.00");
+                SCSLEL = Math.Acos(res);
 
                 //SL-EL-WL
                 v1 = SL - EL;
@@ -299,9 +296,7 @@ namespace TA_Bahasa_Isyarat
                 v2 = WL - EL;
                 v2 = v2.Normalize();
                 res = Vector3.DotProduct(v1, v2);
-                angle = Math.Acos(res);
-                sb.Append(angle.ToString("0.00000") + ";");
-                //SL_EL_WL.Content = angle.ToString("0.00");
+                SLELWL = Math.Acos(res);
 
                 //EL-WL-HL
                 v1 = EL - WL;
@@ -309,23 +304,55 @@ namespace TA_Bahasa_Isyarat
                 v2 = HL - WL;
                 v2 = v2.Normalize();
                 res = Vector3.DotProduct(v1, v2);
-                angle = Math.Acos(res);
-                sb.Append(angle.ToString("0.00000") + ";");
-                //EL_WL_HL.Content = angle.ToString("0.00");
+                ELWLHL = Math.Acos(res);
 
                 //Distance HR - HL
-                sb.AppendLine(Vector3.Distance(HR, HL).ToString("0.00000"));
-                //DisHRHL.Content = Vector3.Distance(HR, HL).ToString("0.00000");
+                DisHRHL = Vector3.Distance(HR, HL);
+
                 (sender as BackgroundWorker).ReportProgress(progress);
                 Thread.Sleep(1000);
             }
+            SRER /= 10;
+            ERWR /= 10;
+            WRHR /= 10;
+            SLEL /= 10;
+            ELWL /= 10;
+            WLHL /= 10;
+            HRHL /= 10;
+            SCSRER /= 10;
+            SRERWR /= 10;
+            ERWRHR /= 10;
+            SCSLEL /= 10;
+            SLELWL /= 10;
+            ELWLHL /= 10;
+            DisHRHL /= 10;
+            sb.Append(String.Format("{0};{1};{2};", SRER.X.ToString("0.00000"), SRER.Y.ToString("0.00000"), SRER.Z.ToString("0.00000")));
+            sb.Append(String.Format("{0};{1};{2};", ERWR.X.ToString("0.00000"), ERWR.Y.ToString("0.00000"), ERWR.Z.ToString("0.00000")));
+            sb.Append(String.Format("{0};{1};{2};", WRHR.X.ToString("0.00000"), WRHR.Y.ToString("0.00000"), WRHR.Z.ToString("0.00000")));
+            sb.Append(String.Format("{0};{1};{2};", SLEL.X.ToString("0.00000"), SLEL.Y.ToString("0.00000"), SLEL.Z.ToString("0.00000")));
+            sb.Append(String.Format("{0};{1};{2};", ELWL.X.ToString("0.00000"), ELWL.Y.ToString("0.00000"), ELWL.Z.ToString("0.00000")));
+            sb.Append(String.Format("{0};{1};{2};", WLHL.X.ToString("0.00000"), WLHL.Y.ToString("0.00000"), WLHL.Z.ToString("0.00000")));
+            sb.Append(String.Format("{0};{1};{2};", HRHL.X.ToString("0.00000"), HRHL.Y.ToString("0.00000"), HRHL.Z.ToString("0.00000")));
+            sb.Append(String.Format("{0};", SCSRER.ToString("0.00000")));
+            sb.Append(String.Format("{0};", SRERWR.ToString("0.00000")));
+            sb.Append(String.Format("{0};", ERWRHR.ToString("0.00000")));
+            sb.Append(String.Format("{0};", SCSLEL.ToString("0.00000")));
+            sb.Append(String.Format("{0};", SLELWL.ToString("0.00000")));
+            sb.Append(String.Format("{0};", ELWLHL.ToString("0.00000")));
+            sb.Append(String.Format("{0}", DisHRHL.ToString("0.00000")));
 
             result = true;
             sb.Replace(",", ".");
             sb.Replace(";", ",");
+            int count = 1;
             string fullPath = @path + filename;
-            if (File.Exists(fullPath))
-                File.Delete(fullPath);
+            while (File.Exists(fullPath))
+            {
+                string[] temp = filename.Split('.');
+                count++;
+                filename = String.Format("{0}.{1}.arff", temp[0], count.ToString());
+                fullPath = @path + filename; 
+            }
             File.AppendAllText(fullPath, sb.ToString());
 
             return;
@@ -338,7 +365,7 @@ namespace TA_Bahasa_Isyarat
                 StatusDetail.Content = "Gesture name must have 3 or more character";
                 return;
             }
-            filename = fileName.Text + ".arff";
+            filename = fileName.Text + ".1.arff";
             StatusDetail.Content = "Searching for Skeleton";
             BackgroundWorker worker = new BackgroundWorker();
             worker.WorkerReportsProgress = true;
@@ -346,6 +373,11 @@ namespace TA_Bahasa_Isyarat
             worker.ProgressChanged += Worker_ProgressChanged;
             worker.RunWorkerCompleted += Worker_RunWorkerCompleted;
             worker.RunWorkerAsync();
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            StopKinect(mainSensor);
         }
     }
 }

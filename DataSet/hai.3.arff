@@ -1,0 +1,32 @@
+@relation gesture
+@attribute ERSRX real
+@attribute ERSRY real
+@attribute ERSRZ real
+@attribute WRERX real
+@attribute WRERY real
+@attribute WRERZ real
+@attribute HRWRX real
+@attribute HRWRY real
+@attribute HRWRZ real
+@attribute ELSLX real
+@attribute ELSLY real
+@attribute ELSLZ real
+@attribute WLELX real
+@attribute WLELY real
+@attribute WLELZ real
+@attribute HLWLX real
+@attribute HLWLY real
+@attribute HLWLZ real
+@attribute HLWRX real
+@attribute HLWRY real
+@attribute HLWRZ real
+@attribute SCSRER real
+@attribute SRERWR real
+@attribute ERWRHR real
+@attribute SCSLEL real
+@attribute SLELWL real
+@attribute ELWLHL real
+@attribute DisHRHL real
+
+@data
+0.17185,-0.11818,-0.03251,0.01326,0.22981,-0.05883,-0.02264,0.08022,0.00693,-0.11243,-0.25369,-0.04430,-0.05519,-0.18610,-0.12540,-0.00361,-0.07010,-0.04534,-0.67286,-0.67915,-0.11512,0.29673,0.11186,0.26481,0.26285,0.26843,0.29584,0.09704

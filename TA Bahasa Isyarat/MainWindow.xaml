@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:TA_Bahasa_Isyarat"
         xmlns:WpfViewers="clr-namespace:Microsoft.Samples.Kinect.WpfViewers;assembly=Microsoft.Samples.Kinect.WpfViewers" x:Class="TA_Bahasa_Isyarat.MainWindow"
         mc:Ignorable="d"
-        Title="MainWindow" Height="861" Width="913" Loaded="Window_Loaded">
+        Title="MainWindow" Height="861" Width="913" Loaded="Window_Loaded" Closed="Window_Closed">
     <Grid>
 
         <WpfViewers:KinectColorViewer x:Name="ColorView" HorizontalAlignment="Left" Height="480" Margin="10,10,0,0" VerticalAlignment="Top" Width="640"/>

@@ -36,7 +36,7 @@ namespace TA_Bahasa_Isyarat
 
         public Vector3()
         {
-
+            SetVector(0, 0, 0);
         }
 
         public Vector3(double x, double y, double z)
