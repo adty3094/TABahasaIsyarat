@@ -56,6 +56,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ClassificationClass.cs" />
+    <Compile Include="DataSet.cs" />
+    <Compile Include="DataSetList.cs" />
+    <Compile Include="FileReader.cs" />
     <Compile Include="Vector3.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

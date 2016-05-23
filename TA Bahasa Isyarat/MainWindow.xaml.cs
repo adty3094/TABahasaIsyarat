@@ -24,16 +24,22 @@ namespace TA_Bahasa_Isyarat
     /// </summary>
     public partial class MainWindow : Window
     {
+        //Kinect
         private KinectSensor mainSensor;
-        private Skeleton first;
-        bool closing = false;
+        private Skeleton first;        
         const int skeletonCount = 6;
         Skeleton[] allSkeletons = new Skeleton[skeletonCount];
+
+        //Method
+        ClassificationClass cc = new ClassificationClass();
+
+        //etc
         const string path = "..\\..\\..\\DataSet\\";
         private string filename;
         bool result;
         int phase;
-
+        
+        //Joints
         //Right Body 
         Vector3 SR = new Vector3();
         Vector3 ER = new Vector3();
@@ -92,9 +98,6 @@ namespace TA_Bahasa_Isyarat
 
         private void MainSensor_AllFramesReady(object sender, AllFramesReadyEventArgs e)
         {
-            if (closing)
-                return;
-
             //Get a skeleton
             first = GetFirstSkeleton(e);
 
