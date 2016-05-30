@@ -22,7 +22,7 @@
         <ListBox x:Name="fileList" HorizontalAlignment="Left" Height="102" Margin="431,543,0,0" VerticalAlignment="Top" Width="182" SelectionChanged="fileList_SelectionChanged"/>
         <Label x:Name="label1_Copy2" Content="Gesture List" HorizontalAlignment="Left" Margin="431,507,0,0" VerticalAlignment="Top" Width="152" FontSize="16"/>
         <Label x:Name="label1_Copy3" Content="Testing" HorizontalAlignment="Left" Margin="655,507,0,0" VerticalAlignment="Top" Width="152" FontSize="16"/>
-        <Button x:Name="trainingButton" Content="Start" HorizontalAlignment="Left" Margin="661,543,0,0" VerticalAlignment="Top" Width="75"/>
+        <Button x:Name="trainingButton" Content="Start Testing" HorizontalAlignment="Left" Margin="661,543,0,0" VerticalAlignment="Top" Width="75"/>
         <Label x:Name="label1_Copy4" Content="Output" HorizontalAlignment="Left" Margin="655,576,0,0" VerticalAlignment="Top" Width="152" FontSize="16"/>
         <TextBox x:Name="OutputText" HorizontalAlignment="Left" Height="51" Margin="661,612,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="175" FontSize="32" />
         <WpfViewers:KinectDepthViewer x:Name="DepthView" HorizontalAlignment="Left" Height="220" Margin="10,507,0,0" VerticalAlignment="Top" Width="220"/>
