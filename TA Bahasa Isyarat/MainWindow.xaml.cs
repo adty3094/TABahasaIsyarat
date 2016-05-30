@@ -35,8 +35,10 @@ namespace TA_Bahasa_Isyarat
 
         //etc
         const string path = "..\\..\\..\\DataSet\\";
+        const string imagePath = "..\\..\\..\\IsyaratImage\\";
         private string filename;
         bool result;
+        bool isFirstNull;
         int phase;
         
         //Joints
@@ -53,6 +55,22 @@ namespace TA_Bahasa_Isyarat
         //Center Body;
         Vector3 SC = new Vector3();
         Vector3 Head = new Vector3();
+
+        //Feature
+        Vector3 SRER = new Vector3();
+        Vector3 ERWR = new Vector3();
+        Vector3 WRHR = new Vector3();
+        Vector3 SLEL = new Vector3();
+        Vector3 ELWL = new Vector3();
+        Vector3 WLHL = new Vector3();
+        Vector3 HRHL = new Vector3();
+        double SCSRER = new double();
+        double SRERWR = new double();
+        double ERWRHR = new double();
+        double SCSLEL = new double();
+        double SLELWL = new double();
+        double ELWLHL = new double();
+        double DisHRHL = new double();
 
         public MainWindow()
         {
@@ -103,8 +121,10 @@ namespace TA_Bahasa_Isyarat
 
             if (first == null)
             {
+                isFirstNull = true;
                 return;
             }
+            isFirstNull = false;
         }
 
         private Skeleton GetFirstSkeleton(AllFramesReadyEventArgs e)
@@ -139,9 +159,16 @@ namespace TA_Bahasa_Isyarat
             fileList.Items.Clear();
             DirectoryInfo dinfo = new DirectoryInfo(path);
             FileInfo[] Files = dinfo.GetFiles();
+            List<string> gestureList = new List<string>(); 
             foreach (FileInfo file in Files)
             {
-                fileList.Items.Add(file.Name.Substring(0, file.Name.LastIndexOf(".")));
+                string gestureName = file.Name.Split('.')[0];
+                int itemIndex = gestureList.IndexOf(gestureName);
+                if (itemIndex == -1)
+                {
+                    gestureList.Add(gestureName);
+                    fileList.Items.Add(gestureName);
+                }
             }
         }
 
@@ -167,7 +194,7 @@ namespace TA_Bahasa_Isyarat
                 PopulateFiles();
             }
             else
-                StatusDetail.Content = "Skeleton Not Found";
+                StatusDetail.Content = "Skeleton Lost / Not Found";
         }
 
         private void Worker_DoWork(object sender, DoWorkEventArgs e)
@@ -219,23 +246,16 @@ namespace TA_Bahasa_Isyarat
 
             int progress = 0;
             (sender as BackgroundWorker).ReportProgress(progress);
-            Vector3 SRER = new Vector3();
-            Vector3 ERWR = new Vector3();
-            Vector3 WRHR = new Vector3();
-            Vector3 SLEL = new Vector3();
-            Vector3 ELWL = new Vector3();
-            Vector3 WLHL = new Vector3();
-            Vector3 HRHL = new Vector3();
-            double SCSRER = new double();
-            double SRERWR = new double();
-            double ERWRHR = new double();
-            double SCSLEL = new double();
-            double SLELWL = new double();
-            double ELWLHL = new double();
-            double DisHRHL = new double();
-            for (int i = 0; i < 10; i++)
+            
+            for (int i = 0; i < 100; i++)
             {
-                progress += 10;
+                if (first == null)
+                {
+                    result = false;
+                    return;
+                }
+
+                progress ++;
                 //Right Body
                 SR.SetVector(first.Joints[JointType.ShoulderRight].Position);
                 ER.SetVector(first.Joints[JointType.ElbowRight].Position);
@@ -313,22 +333,22 @@ namespace TA_Bahasa_Isyarat
                 DisHRHL = Vector3.Distance(HR, HL);
 
                 (sender as BackgroundWorker).ReportProgress(progress);
-                Thread.Sleep(1000);
+                Thread.Sleep(100);
             }
-            SRER /= 10;
-            ERWR /= 10;
-            WRHR /= 10;
-            SLEL /= 10;
-            ELWL /= 10;
-            WLHL /= 10;
-            HRHL /= 10;
-            SCSRER /= 10;
-            SRERWR /= 10;
-            ERWRHR /= 10;
-            SCSLEL /= 10;
-            SLELWL /= 10;
-            ELWLHL /= 10;
-            DisHRHL /= 10;
+            SRER /= 100;
+            ERWR /= 100;
+            WRHR /= 100;
+            SLEL /= 100;
+            ELWL /= 100;
+            WLHL /= 100;
+            HRHL /= 100;
+            SCSRER /= 100;
+            SRERWR /= 100;
+            ERWRHR /= 100;
+            SCSLEL /= 100;
+            SLELWL /= 100;
+            ELWLHL /= 100;
+            DisHRHL /= 100;
             sb.Append(String.Format("{0};{1};{2};", SRER.X.ToString("0.00000"), SRER.Y.ToString("0.00000"), SRER.Z.ToString("0.00000")));
             sb.Append(String.Format("{0};{1};{2};", ERWR.X.ToString("0.00000"), ERWR.Y.ToString("0.00000"), ERWR.Z.ToString("0.00000")));
             sb.Append(String.Format("{0};{1};{2};", WRHR.X.ToString("0.00000"), WRHR.Y.ToString("0.00000"), WRHR.Z.ToString("0.00000")));
@@ -347,7 +367,7 @@ namespace TA_Bahasa_Isyarat
             result = true;
             sb.Replace(",", ".");
             sb.Replace(";", ",");
-            int count = 1;
+            int count = 0;
             string fullPath = @path + filename;
             while (File.Exists(fullPath))
             {
@@ -368,7 +388,7 @@ namespace TA_Bahasa_Isyarat
                 StatusDetail.Content = "Gesture name must have 3 or more character";
                 return;
             }
-            filename = fileName.Text + ".1.arff";
+            filename = fileName.Text + ".0.arff";
             StatusDetail.Content = "Searching for Skeleton";
             BackgroundWorker worker = new BackgroundWorker();
             worker.WorkerReportsProgress = true;
@@ -381,6 +401,15 @@ namespace TA_Bahasa_Isyarat
         private void Window_Closed(object sender, EventArgs e)
         {
             StopKinect(mainSensor);
+        }
+
+        private void fileList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            string temp = @imagePath + fileList.Items.GetItemAt(fileList.SelectedIndex) + ".bmp";
+            if (File.Exists(temp))
+                gestureImage.Source = (ImageSource)new ImageSourceConverter().ConvertFrom(temp);
+            else
+                StatusDetail.Content = "No Image Preview";
         }
     }
 }

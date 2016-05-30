@@ -6,26 +6,29 @@
         xmlns:local="clr-namespace:TA_Bahasa_Isyarat"
         xmlns:WpfViewers="clr-namespace:Microsoft.Samples.Kinect.WpfViewers;assembly=Microsoft.Samples.Kinect.WpfViewers" x:Class="TA_Bahasa_Isyarat.MainWindow"
         mc:Ignorable="d"
-        Title="MainWindow" Height="861" Width="913" Loaded="Window_Loaded" Closed="Window_Closed">
+        Title="MainWindow" Height="917" Width="913" Loaded="Window_Loaded" Closed="Window_Closed">
     <Grid>
 
         <WpfViewers:KinectColorViewer x:Name="ColorView" HorizontalAlignment="Left" Height="480" Margin="10,10,0,0" VerticalAlignment="Top" Width="640"/>
         <WpfViewers:KinectSkeletonViewer x:Name="SkeletonView" HorizontalAlignment="Left" Height="480" Margin="10,10,0,0" VerticalAlignment="Top" Width="640"/>
         <WpfViewers:KinectSettings x:Name="KinectSetting" HorizontalAlignment="Left" Margin="655,10,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="StatusDetail" Content="" HorizontalAlignment="Left" Height="28" Margin="110,793,0,0" VerticalAlignment="Top" Width="785" FontSize="16"/>
-        <Label x:Name="label1" Content="Status:" HorizontalAlignment="Left" Margin="10,793,0,0" VerticalAlignment="Top" Width="100" FontSize="16"/>
+        <Label x:Name="StatusDetail" Content="" HorizontalAlignment="Left" Height="28" Margin="110,848,0,0" VerticalAlignment="Top" Width="785" FontSize="16"/>
+        <Label x:Name="label1" Content="Status:" HorizontalAlignment="Left" Margin="10,848,0,0" VerticalAlignment="Top" Width="100" FontSize="16"/>
         <Label x:Name="label1_Copy" Content="Create New Gesture" HorizontalAlignment="Left" Margin="235,507,0,0" VerticalAlignment="Top" Width="152" FontSize="16"/>
         <TextBox x:Name="fileName" HorizontalAlignment="Left" Height="28" Margin="241,579,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="146" FontSize="16"/>
         <Button x:Name="createButton" Content="Create File" HorizontalAlignment="Left" Margin="241,625,0,0" VerticalAlignment="Top" Width="75" Click="createButton_click"/>
         <ProgressBar x:Name="progressBar" HorizontalAlignment="Left" Height="20" Margin="241,667,0,0" VerticalAlignment="Top" Width="146"/>
         <Label x:Name="label1_Copy1" Content="Gesture Name:" HorizontalAlignment="Left" Margin="235,543,0,0" VerticalAlignment="Top" Width="115" FontSize="16"/>
-        <ListBox x:Name="fileList" HorizontalAlignment="Left" Height="192" Margin="438,543,0,0" VerticalAlignment="Top" Width="182"/>
+        <ListBox x:Name="fileList" HorizontalAlignment="Left" Height="102" Margin="431,543,0,0" VerticalAlignment="Top" Width="182" SelectionChanged="fileList_SelectionChanged"/>
         <Label x:Name="label1_Copy2" Content="Gesture List" HorizontalAlignment="Left" Margin="431,507,0,0" VerticalAlignment="Top" Width="152" FontSize="16"/>
-        <Label x:Name="label1_Copy3" Content="Training" HorizontalAlignment="Left" Margin="655,507,0,0" VerticalAlignment="Top" Width="152" FontSize="16"/>
+        <Label x:Name="label1_Copy3" Content="Testing" HorizontalAlignment="Left" Margin="655,507,0,0" VerticalAlignment="Top" Width="152" FontSize="16"/>
         <Button x:Name="trainingButton" Content="Start" HorizontalAlignment="Left" Margin="661,543,0,0" VerticalAlignment="Top" Width="75"/>
         <Label x:Name="label1_Copy4" Content="Output" HorizontalAlignment="Left" Margin="655,576,0,0" VerticalAlignment="Top" Width="152" FontSize="16"/>
         <TextBox x:Name="OutputText" HorizontalAlignment="Left" Height="51" Margin="661,612,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="175" FontSize="32" />
         <WpfViewers:KinectDepthViewer x:Name="DepthView" HorizontalAlignment="Left" Height="220" Margin="10,507,0,0" VerticalAlignment="Top" Width="220"/>
+        <Image x:Name="gestureImage" HorizontalAlignment="Left" Height="152" Margin="431,681,0,0" VerticalAlignment="Top" Width="152" Stretch="UniformToFill"/>
+        <Label x:Name="label1_Copy5" Content="Gesture Preview" HorizontalAlignment="Left" Margin="431,645,0,0" VerticalAlignment="Top" Width="152" FontSize="16"/>
+        <Button x:Name="TrainButton" Content="Train Dataset" HorizontalAlignment="Left" Margin="241,707,0,0" VerticalAlignment="Top" Width="75"/>
 
     </Grid>
 </Window>
