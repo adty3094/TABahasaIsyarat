@@ -46,7 +46,7 @@ namespace TA_Bahasa_Isyarat
 
         private void DoInputLayer(int index)
         {
-            for (int i = 0; i < _dsl[index].AtrributeCount; i++)
+            for (int i = 0; i < _dsl[index].AttributeCount; i++)
                 neuralNetwork.InputLayer[i].Input = _dsl[index][i];
             DoHiddenLayer();
         }

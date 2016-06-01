@@ -12,12 +12,12 @@ namespace TA_Bahasa_Isyarat
         public DataSetList ReadFile(string path, ClassificationClass cc)
         {
             DirectoryInfo dirInfo = new DirectoryInfo(path);
-            FileInfo[] fileInfo = dirInfo.GetFiles("*.txt");
+            FileInfo[] fileInfo = dirInfo.GetFiles("*.txt"); 
 
             DataSetList dsl = new DataSetList();
             foreach(FileInfo file in fileInfo)
             {
-                string className = file.Name.Split('.')[0];
+                string className = file.Name.Split('.')[1];
                 cc.Add(className);
                 StreamReader reader = new StreamReader(path + file.Name);
                 List<float> attr = new List<float>();

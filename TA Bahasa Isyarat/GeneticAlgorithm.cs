@@ -78,7 +78,7 @@ namespace TA_Bahasa_Isyarat
                 }
 
                 NeuralNetwork nn = new NeuralNetwork();
-                nn.InitNetwork(dsl[0].AtrributeCount, dsl[0].AtrributeCount / 2, classificationClass.TargetCount);
+                nn.InitNetwork(dsl[0].AttributeCount, dsl[0].AttributeCount / 2, classificationClass.TargetCount);
                 nn.InitWeight();
 
                 BackPropagation bp = new BackPropagation();
@@ -151,8 +151,8 @@ namespace TA_Bahasa_Isyarat
 
         private int[] GetRandomBinary()
         {
-            int[] chromosomTemp = new int[dataSetList[0].AtrributeCount];
-            for (int i = 0; i < dataSetList[0].AtrributeCount; i++)
+            int[] chromosomTemp = new int[dataSetList[0].AttributeCount];
+            for (int i = 0; i < dataSetList[0].AttributeCount; i++)
             {
                 int ran = random.Next(0, 2);
                 chromosomTemp[i] = ran;

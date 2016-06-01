@@ -30,7 +30,7 @@ namespace TA_Bahasa_Isyarat
             }
         }
 
-        public int AtrributeCount
+        public int AttributeCount
         {
             get
             {
@@ -53,7 +53,7 @@ namespace TA_Bahasa_Isyarat
         public DataSet(DataSet ds)
         {
             _attribute = new List<float>();
-            for (int i = 0; i < ds.AtrributeCount; i++)
+            for (int i = 0; i < ds.AttributeCount; i++)
                 _attribute.Add(ds[i]);
             this.ClassName = ds.ClassName;
         }

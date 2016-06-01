@@ -32,6 +32,8 @@ namespace TA_Bahasa_Isyarat
 
         //Method
         ClassificationClass cc = new ClassificationClass();
+        ClassificationClass cc1 = new ClassificationClass();
+        ClassificationClass cc2 = new ClassificationClass();
 
         //etc
         const string path = "..\\..\\..\\DataSet\\";
@@ -39,7 +41,13 @@ namespace TA_Bahasa_Isyarat
         private string filename;
         bool result;
         bool isFirstNull;
+        bool isTestingMode = false;
         int phase;
+        string algorithm = "BP";
+        string algoTest = "BP";
+        NeuralNetwork loadNet = new NeuralNetwork();
+
+        StreamWriter file;
         
         //Joints
         //Right Body 
@@ -95,15 +103,14 @@ namespace TA_Bahasa_Isyarat
 
                 if (mainSensor.Status == KinectStatus.Connected)
                 {
-                    StatusDetail.Content = "Setup Kinect";
+                    StatusDetail.Content = "Setup Kinect"; 
                     Microsoft.Samples.Kinect.WpfViewers.KinectSensorManager kinectManager = new Microsoft.Samples.Kinect.WpfViewers.KinectSensorManager();
                     kinectManager.KinectSensor = mainSensor;
                     kinectManager.ColorStreamEnabled = true;
                     kinectManager.SkeletonStreamEnabled = true;
                     kinectManager.DepthStreamEnabled = true;
-                    kinectManager.ElevationAngle = 0;
+                    kinectManager.ElevationAngle = 11;
                     ColorView.KinectSensorManager =
-                        DepthView.KinectSensorManager =
                         SkeletonView.KinectSensorManager =
                         KinectSetting.KinectSensorManager = kinectManager;
                     StatusDetail.Content = "Idle";
@@ -157,12 +164,24 @@ namespace TA_Bahasa_Isyarat
         private void PopulateFiles()
         {
             fileList.Items.Clear();
-            DirectoryInfo dinfo = new DirectoryInfo(path);
-            FileInfo[] Files = dinfo.GetFiles();
+            DirectoryInfo dinfo = new DirectoryInfo(path + "gol1\\");
+            FileInfo[] Files = dinfo.GetFiles("*.txt");
             List<string> gestureList = new List<string>(); 
             foreach (FileInfo file in Files)
             {
-                string gestureName = file.Name.Split('.')[0];
+                string gestureName = file.Name.Split('.')[1];
+                int itemIndex = gestureList.IndexOf(gestureName);
+                if (itemIndex == -1)
+                {
+                    gestureList.Add(gestureName);
+                    fileList.Items.Add(gestureName);
+                }
+            }
+            dinfo = new DirectoryInfo(path + "gol2\\");
+            Files = dinfo.GetFiles("*.txt");
+            foreach (FileInfo file in Files)
+            {
+                string gestureName = file.Name.Split('.')[1];
                 int itemIndex = gestureList.IndexOf(gestureName);
                 if (itemIndex == -1)
                 {
@@ -213,36 +232,6 @@ namespace TA_Bahasa_Isyarat
             phase++;
 
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine("@relation gesture");
-            sb.AppendLine("@attribute ERSRX real");
-            sb.AppendLine("@attribute ERSRY real");
-            sb.AppendLine("@attribute ERSRZ real");
-            sb.AppendLine("@attribute WRERX real");
-            sb.AppendLine("@attribute WRERY real");
-            sb.AppendLine("@attribute WRERZ real");
-            sb.AppendLine("@attribute HRWRX real");
-            sb.AppendLine("@attribute HRWRY real");
-            sb.AppendLine("@attribute HRWRZ real");
-            sb.AppendLine("@attribute ELSLX real");
-            sb.AppendLine("@attribute ELSLY real");
-            sb.AppendLine("@attribute ELSLZ real");
-            sb.AppendLine("@attribute WLELX real");
-            sb.AppendLine("@attribute WLELY real");
-            sb.AppendLine("@attribute WLELZ real");
-            sb.AppendLine("@attribute HLWLX real");
-            sb.AppendLine("@attribute HLWLY real");
-            sb.AppendLine("@attribute HLWLZ real");
-            sb.AppendLine("@attribute HLWRX real");
-            sb.AppendLine("@attribute HLWRY real");
-            sb.AppendLine("@attribute HLWRZ real");
-            sb.AppendLine("@attribute SCSRER real");
-            sb.AppendLine("@attribute SRERWR real");
-            sb.AppendLine("@attribute ERWRHR real");
-            sb.AppendLine("@attribute SCSLEL real");
-            sb.AppendLine("@attribute SLELWL real");
-            sb.AppendLine("@attribute ELWLHL real");
-            sb.AppendLine("@attribute DisHRHL real\n");
-            sb.AppendLine("@data");
 
             int progress = 0;
             (sender as BackgroundWorker).ReportProgress(progress);
@@ -349,34 +338,56 @@ namespace TA_Bahasa_Isyarat
             SLELWL /= 100;
             ELWLHL /= 100;
             DisHRHL /= 100;
-            sb.Append(String.Format("{0};{1};{2};", SRER.X.ToString("0.00000"), SRER.Y.ToString("0.00000"), SRER.Z.ToString("0.00000")));
-            sb.Append(String.Format("{0};{1};{2};", ERWR.X.ToString("0.00000"), ERWR.Y.ToString("0.00000"), ERWR.Z.ToString("0.00000")));
-            sb.Append(String.Format("{0};{1};{2};", WRHR.X.ToString("0.00000"), WRHR.Y.ToString("0.00000"), WRHR.Z.ToString("0.00000")));
-            sb.Append(String.Format("{0};{1};{2};", SLEL.X.ToString("0.00000"), SLEL.Y.ToString("0.00000"), SLEL.Z.ToString("0.00000")));
-            sb.Append(String.Format("{0};{1};{2};", ELWL.X.ToString("0.00000"), ELWL.Y.ToString("0.00000"), ELWL.Z.ToString("0.00000")));
-            sb.Append(String.Format("{0};{1};{2};", WLHL.X.ToString("0.00000"), WLHL.Y.ToString("0.00000"), WLHL.Z.ToString("0.00000")));
-            sb.Append(String.Format("{0};{1};{2};", HRHL.X.ToString("0.00000"), HRHL.Y.ToString("0.00000"), HRHL.Z.ToString("0.00000")));
-            sb.Append(String.Format("{0};", SCSRER.ToString("0.00000")));
-            sb.Append(String.Format("{0};", SRERWR.ToString("0.00000")));
-            sb.Append(String.Format("{0};", ERWRHR.ToString("0.00000")));
-            sb.Append(String.Format("{0};", SCSLEL.ToString("0.00000")));
-            sb.Append(String.Format("{0};", SLELWL.ToString("0.00000")));
-            sb.Append(String.Format("{0};", ELWLHL.ToString("0.00000")));
+            sb.AppendLine(String.Format("{0}{1}{2}{3}{4}", SRER.X.ToString("0.00000"), System.Environment.NewLine, SRER.Y.ToString("0.00000"), System.Environment.NewLine, SRER.Z.ToString("0.00000")));
+            sb.AppendLine(String.Format("{0}{1}{2}{3}{4}", ERWR.X.ToString("0.00000"), System.Environment.NewLine, ERWR.Y.ToString("0.00000"), System.Environment.NewLine, ERWR.Z.ToString("0.00000")));
+            sb.AppendLine(String.Format("{0}{1}{2}{3}{4}", WRHR.X.ToString("0.00000"), System.Environment.NewLine, WRHR.Y.ToString("0.00000"), System.Environment.NewLine, WRHR.Z.ToString("0.00000")));
+            sb.AppendLine(String.Format("{0}{1}{2}{3}{4}", SLEL.X.ToString("0.00000"), System.Environment.NewLine, SLEL.Y.ToString("0.00000"), System.Environment.NewLine, SLEL.Z.ToString("0.00000")));
+            sb.AppendLine(String.Format("{0}{1}{2}{3}{4}", ELWL.X.ToString("0.00000"), System.Environment.NewLine, ELWL.Y.ToString("0.00000"), System.Environment.NewLine, ELWL.Z.ToString("0.00000")));
+            sb.AppendLine(String.Format("{0}{1}{2}{3}{4}", WLHL.X.ToString("0.00000"), System.Environment.NewLine, WLHL.Y.ToString("0.00000"), System.Environment.NewLine, WLHL.Z.ToString("0.00000")));
+            sb.AppendLine(String.Format("{0}{1}{2}{3}{4}", HRHL.X.ToString("0.00000"), System.Environment.NewLine, HRHL.Y.ToString("0.00000"), System.Environment.NewLine, HRHL.Z.ToString("0.00000")));
+            sb.AppendLine(String.Format("{0}", SCSRER.ToString("0.00000")));
+            sb.AppendLine(String.Format("{0}", SRERWR.ToString("0.00000")));
+            sb.AppendLine(String.Format("{0}", ERWRHR.ToString("0.00000")));
+            sb.AppendLine(String.Format("{0}", SCSLEL.ToString("0.00000")));
+            sb.AppendLine(String.Format("{0}", SLELWL.ToString("0.00000")));
+            sb.AppendLine(String.Format("{0}", ELWLHL.ToString("0.00000")));
             sb.Append(String.Format("{0}", DisHRHL.ToString("0.00000")));
+
+            int gol = 0;
+            if (SRER.Y > -0.13754)
+                gol = 1;
+            else
+                gol = 2;
 
             result = true;
             sb.Replace(",", ".");
-            sb.Replace(";", ",");
             int count = 0;
-            string fullPath = @path + filename;
-            while (File.Exists(fullPath))
+            string fullPath;
+            if(gol == 1)
+                fullPath = @path + "gol1\\" + filename;
+            else
+                fullPath = @path + "gol2\\" + filename;
+            while (File.Exists(fullPath)) 
             {
                 string[] temp = filename.Split('.');
                 count++;
-                filename = String.Format("{0}.{1}.arff", temp[0], count.ToString());
-                fullPath = @path + filename; 
+                if(gol == 1)
+                    filename = String.Format("gol1.{0}.{1}.txt", temp[1], count.ToString());
+                else
+                    filename = String.Format("gol2.{0}.{1}.txt", temp[1], count.ToString());
+
+                if (gol == 1)
+                    fullPath = @path + "gol1\\" + filename;
+                else
+                    fullPath = @path + "gol2\\" + filename;
             }
             File.AppendAllText(fullPath, sb.ToString());
+
+            //Creating Weka Testing File
+            sb.Replace(System.Environment.NewLine, ",");
+            sb.AppendLine();
+            string wekafile = @path + filename.Split('.')[0] + ".arff";
+            File.AppendAllText(wekafile, sb.ToString());
 
             return;
         }
@@ -388,7 +399,7 @@ namespace TA_Bahasa_Isyarat
                 StatusDetail.Content = "Gesture name must have 3 or more character";
                 return;
             }
-            filename = fileName.Text + ".0.arff";
+            filename = fileName.Text + ".0.txt";
             StatusDetail.Content = "Searching for Skeleton";
             BackgroundWorker worker = new BackgroundWorker();
             worker.WorkerReportsProgress = true;
@@ -405,11 +416,285 @@ namespace TA_Bahasa_Isyarat
 
         private void fileList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            string temp = @imagePath + fileList.Items.GetItemAt(fileList.SelectedIndex) + ".bmp";
-            if (File.Exists(temp))
-                gestureImage.Source = (ImageSource)new ImageSourceConverter().ConvertFrom(temp);
+            if (fileList.SelectedIndex == -1) return;
+            string imageFullPath = @imagePath + fileList.Items.GetItemAt(fileList.SelectedIndex) + ".bmp";
+            if (File.Exists(imageFullPath))
+            {
+                gestureImage.Source = (ImageSource)new ImageSourceConverter().ConvertFrom(imageFullPath);
+                StatusDetail.Content = "Image Loaded";
+            }
             else
                 StatusDetail.Content = "No Image Preview";
+        }
+
+        private void TrainButton_Click(object sender, RoutedEventArgs e)
+        {
+           
+            float avgError1 = 0;
+            float avgError2 = 0;
+            NeuralNetwork nn1 = new NeuralNetwork();
+            NeuralNetwork nn2 = new NeuralNetwork();
+            DirectoryInfo info1 = new DirectoryInfo(string.Format("{0}gol1\\", path));
+            DirectoryInfo info2 = new DirectoryInfo(string.Format("{0}gol2\\", path));
+            DataSetList dsl1 = new DataSetList();
+            DataSetList dsl2 = new DataSetList();
+            FileReader fr1 = new FileReader();
+            FileReader fr2 = new FileReader();
+            dsl1 = fr1.ReadFile(info1.FullName, cc1);
+            dsl2 = fr2.ReadFile(info2.FullName, cc2);
+            StatusDetail.Content = "Training Dataset";
+            if (algorithm.Equals("BP"))
+            {
+                nn1.InitNetwork(dsl1[0].AttributeCount, dsl1[0].AttributeCount / 2, cc1.TargetCount);
+                nn2.InitNetwork(dsl2[0].AttributeCount, dsl2[0].AttributeCount / 2, cc2.TargetCount);
+                nn1.Seed = nn2.Seed = 0;
+                nn1.InitWeight();
+                nn2.InitWeight();
+                BackPropagation bp1 = new BackPropagation();
+                BackPropagation bp2 = new BackPropagation();
+                bp1.Init(nn1, dsl1, cc1);
+                bp2.Init(nn2, dsl2, cc2);
+                avgError1 = bp1.Run(1000);
+                avgError2 = bp2.Run(1000);
+            }
+            else if(algorithm.Equals("BPGA"))
+            {
+
+            }
+
+            NNtoXMLWriter nnw1 = new NNtoXMLWriter(nn1, avgError1);
+            NNtoXMLWriter nnw2 = new NNtoXMLWriter(nn2, avgError2);
+            nnw1.Write("gol1.xml", algorithm, null);
+            nnw2.Write("gol2.xml", algorithm, null);
+            StatusDetail.Content = "Training Finished";
+        }
+
+        private void TestButton_Click(object sender, RoutedEventArgs e)
+        {
+            if(!isTestingMode)
+            {
+                isTestingMode = true;
+                TestButton.Content = "Stop Testing";
+                BackgroundWorker testWorker = new BackgroundWorker();
+                testWorker.WorkerReportsProgress = true;
+                testWorker.DoWork += TestWorker_DoWork;
+                testWorker.ProgressChanged += TestWorker_ProgressChanged;
+                testWorker.RunWorkerCompleted += TestWorker_RunWorkerCompleted;
+                testWorker.RunWorkerAsync();
+
+            }
+            else if(isTestingMode)
+            {
+                isTestingMode = false;
+                TestButton.Content = "Start Testing";
+            }
+        }
+
+        private void TestWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            StatusDetail.Content = "Testing Finished";
+        }
+
+        private void TestWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            int gol;
+            DataSetList dsl = new DataSetList();
+            List<float> fitur = new List<float>();
+            string xmlName;
+            fitur.Add((float)SRER.X);
+            fitur.Add((float)SRER.Y);
+            fitur.Add((float)SRER.Z);
+            fitur.Add((float)ERWR.X);
+            fitur.Add((float)ERWR.Y);
+            fitur.Add((float)ERWR.Z);
+            fitur.Add((float)WRHR.X);
+            fitur.Add((float)WRHR.Y);
+            fitur.Add((float)WRHR.Z);
+            fitur.Add((float)SLEL.X);
+            fitur.Add((float)SLEL.Y);
+            fitur.Add((float)SLEL.Z);
+            fitur.Add((float)ELWL.X);
+            fitur.Add((float)ELWL.Y);
+            fitur.Add((float)ELWL.Z);
+            fitur.Add((float)WLHL.X);
+            fitur.Add((float)WLHL.Y);
+            fitur.Add((float)WLHL.Z);
+            fitur.Add((float)HRHL.X);
+            fitur.Add((float)HRHL.Y);
+            fitur.Add((float)HRHL.Z);
+            fitur.Add((float)SCSRER);
+            fitur.Add((float)SRERWR);
+            fitur.Add((float)ERWRHR);
+            fitur.Add((float)SCSLEL);
+            fitur.Add((float)SLELWL);
+            fitur.Add((float)ELWLHL);
+            fitur.Add((float)DisHRHL);
+            if (SRER.Y > -0.13754)
+            {
+                xmlName = "gol1.xml";
+                gol = 1;
+            }
+            else
+            {
+                xmlName = "gol2.xml";
+                gol = 2;
+            }
+            DataSet ds = new DataSet(fitur.Count);
+            for(int i = 0; i < fitur.Count; i++)
+            {
+                ds[i] = fitur[i];
+            }
+
+            dsl.Add(ds);
+
+            FeedForward ff = new FeedForward();
+            loadNet = new NeuralNetwork();
+            NNtoXMLReader nnr = new NNtoXMLReader(loadNet);
+            float[] totalSelisih = new float[3];
+            Translate t = new Translate();
+
+            float totalselisihtemp = 0;
+
+            algoTest = nnr.read(xmlName);
+            /* 
+            for (int i = 0 ; i < dsl.Count; i++)
+            {
+                if (algoTest.Equals("BPGA")
+                {
+                    int popCount = 0;
+                    for (int j = 0 ; j < nnr.chromosom.Lenght; j++)
+                    {
+                        if (nnr.chromosom[j] == 0)
+                        {
+                            dsl[i].RemoveBit(j - popCount);
+                            popCount++
+                        }
+                    }
+                }
+            }
+            */
+
+            loadNet = new NeuralNetwork();
+            nnr = new NNtoXMLReader(loadNet);
+            nnr.read(xmlName);
+
+            ff = new FeedForward();
+            ff.Init(loadNet, dsl);
+            for (int i = 0; i < dsl.Count; i++)
+                ff.Run(i);
+
+            t = new Translate(ff.GetActualClass());
+
+            totalSelisih = new float[3];
+
+            if (gol == 1)
+                OutputText.Text = t.Result(cc1);
+            else if (gol == 2)
+                OutputText.Text = t.Result(cc2);
+        }
+
+        private void TestWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            while (isTestingMode)
+            {
+                if (first != null)
+                {
+                    for (int i = 0; i < 100; i++)
+                    {
+                        //Right Body
+                        SR.SetVector(first.Joints[JointType.ShoulderRight].Position);
+                        ER.SetVector(first.Joints[JointType.ElbowRight].Position);
+                        WR.SetVector(first.Joints[JointType.WristRight].Position);
+                        HR.SetVector(first.Joints[JointType.HandRight].Position);
+                        //Left Body
+                        SL.SetVector(first.Joints[JointType.ShoulderLeft].Position);
+                        EL.SetVector(first.Joints[JointType.ElbowLeft].Position);
+                        WL.SetVector(first.Joints[JointType.WristLeft].Position);
+                        HL.SetVector(first.Joints[JointType.HandLeft].Position);
+                        //Center Body
+                        SC.SetVector(first.Joints[JointType.ShoulderCenter].Position);
+                        Head.SetVector(first.Joints[JointType.Head].Position);
+
+                        SRER += ER - SR;
+                        ERWR += WR - ER;
+                        WRHR += HR - WR;
+                        SLEL += EL - SL;
+                        ELWL += WL - EL;
+                        WLHL += HL - WL;
+                        HRHL += HL - HR;
+
+                        Vector3 v1, v2;
+                        double res;
+
+                        //SC-SR-ER
+                        v1 = SC - SR;
+                        v1 = v1.Normalize();
+                        v2 = ER - SR;
+                        v2 = v2.Normalize();
+                        res = Vector3.DotProduct(v1, v2);
+                        SCSRER = Math.Acos(res);
+
+                        //SR-ER-WR
+                        v1 = SR - ER;
+                        v1 = v1.Normalize();
+                        v2 = WR - ER;
+                        v2 = v2.Normalize();
+                        res = Vector3.DotProduct(v1, v2);
+                        SRERWR = Math.Acos(res);
+
+                        //ER-WR-HR
+                        v1 = ER - WR;
+                        v1 = v1.Normalize();
+                        v2 = HR - WR;
+                        v2 = v2.Normalize();
+                        res = Vector3.DotProduct(v1, v2);
+                        ERWRHR = Math.Acos(res);
+
+                        //SC-SL-EL
+                        v1 = SC - SL;
+                        v1 = v1.Normalize();
+                        v2 = EL - SL;
+                        v2 = v2.Normalize();
+                        res = Vector3.DotProduct(v1, v2);
+                        SCSLEL = Math.Acos(res);
+
+                        //SL-EL-WL
+                        v1 = SL - EL;
+                        v1 = v1.Normalize();
+                        v2 = WL - EL;
+                        v2 = v2.Normalize();
+                        res = Vector3.DotProduct(v1, v2);
+                        SLELWL = Math.Acos(res);
+
+                        //EL-WL-HL
+                        v1 = EL - WL;
+                        v1 = v1.Normalize();
+                        v2 = HL - WL;
+                        v2 = v2.Normalize();
+                        res = Vector3.DotProduct(v1, v2);
+                        ELWLHL = Math.Acos(res);
+
+                        //Distance HR - HL
+                        DisHRHL = Vector3.Distance(HR, HL);
+                    }
+                    SRER /= 100;
+                    ERWR /= 100;
+                    WRHR /= 100;
+                    SLEL /= 100;
+                    ELWL /= 100;
+                    WLHL /= 100;
+                    HRHL /= 100;
+                    SCSRER /= 100;
+                    SRERWR /= 100;
+                    ERWRHR /= 100;
+                    SCSLEL /= 100;
+                    SLELWL /= 100;
+                    ELWLHL /= 100;
+                    DisHRHL /= 100;
+                    (sender as BackgroundWorker).ReportProgress(1);
+                    Thread.Sleep(3);
+                }
+            }
         }
     }
 }

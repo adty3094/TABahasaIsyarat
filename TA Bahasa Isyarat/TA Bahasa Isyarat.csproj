@@ -65,7 +65,10 @@
     <Compile Include="FileReader.cs" />
     <Compile Include="GeneticAlgorithm.cs" />
     <Compile Include="NeuralNetwork.cs" />
+    <Compile Include="NNtoXMLReader.cs" />
+    <Compile Include="NNtoXMLWriter.cs" />
     <Compile Include="Node.cs" />
+    <Compile Include="Translate.cs" />
     <Compile Include="Vector3.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
