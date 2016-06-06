@@ -73,7 +73,7 @@ namespace TA_Bahasa_Isyarat
                 
                 writer.WriteElementString("Error", avgError.ToString()); 
                 writer.WriteEndElement();
-                if (algo.Equals("GABP"))
+                if (algo.Equals("BPGA"))
                 {
                     string chromo = "";
                     for (int i = 0; i < fitChrom.Length; i++)

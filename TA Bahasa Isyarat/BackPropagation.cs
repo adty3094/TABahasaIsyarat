@@ -8,7 +8,7 @@ namespace TA_Bahasa_Isyarat
 {
     class BackPropagation
     {
-        private float learningRate = 0.03f;
+        private float learningRate = 0.08f;
         private FeedForward feedForward;
         private NeuralNetwork lastStableNetwork;
 
@@ -110,7 +110,7 @@ namespace TA_Bahasa_Isyarat
                 for(int j = 0; j < Network.HiddenLayer.Count; j++)
                 {
                     float newWeight = Network.InputLayer[i].GetWeight(j) +
-                        (learningRate * hiddenError[j] * Network.InputLayer[i].Input);
+                        (this.learningRate * hiddenError[j] * Network.InputLayer[i].Input);
                     Network.InputLayer[i].SetWeight(j, newWeight);
                 }
             }

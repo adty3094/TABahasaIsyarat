@@ -42,10 +42,14 @@ namespace TA_Bahasa_Isyarat
         bool result;
         bool isFirstNull;
         bool isTestingMode = false;
+        bool isFeatureBad;
+        bool isNeedReboot = false;
         int phase;
         string algorithm = "BP";
         string algoTest = "BP";
         NeuralNetwork loadNet = new NeuralNetwork();
+        int[] seleksi1;
+        int[] seleksi2;
 
         StreamWriter file;
         
@@ -83,6 +87,24 @@ namespace TA_Bahasa_Isyarat
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void InitFeatures()
+        {
+            Vector3 SRER = new Vector3();
+            Vector3 ERWR = new Vector3();
+            Vector3 WRHR = new Vector3();
+            Vector3 SLEL = new Vector3();
+            Vector3 ELWL = new Vector3();
+            Vector3 WLHL = new Vector3();
+            Vector3 HRHL = new Vector3();
+            double SCSRER = 0f;
+            double SRERWR = 0f;
+            double ERWRHR = 0f;
+            double SCSLEL = 0f;
+            double SLELWL = 0f;
+            double ELWLHL = 0f;
+            double DisHRHL = 0f;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -206,8 +228,13 @@ namespace TA_Bahasa_Isyarat
 
         private void Worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+
             progressBar.Value = 0;
-            if (result)
+            if (isNeedReboot)
+            {
+                DisableAll();
+            }
+            else if (result)
             {
                 StatusDetail.Content = "File Created";
                 PopulateFiles();
@@ -234,6 +261,7 @@ namespace TA_Bahasa_Isyarat
             StringBuilder sb = new StringBuilder();
 
             int progress = 0;
+            InitFeatures();
             (sender as BackgroundWorker).ReportProgress(progress);
             
             for (int i = 0; i < 100; i++)
@@ -276,7 +304,7 @@ namespace TA_Bahasa_Isyarat
                 v2 = ER - SR;
                 v2 = v2.Normalize();
                 res = Vector3.DotProduct(v1, v2);
-                SCSRER = Math.Acos(res);
+                SCSRER += (double)Math.Acos(res);
 
                 //SR-ER-WR
                 v1 = SR - ER;
@@ -284,7 +312,7 @@ namespace TA_Bahasa_Isyarat
                 v2 = WR - ER;
                 v2 = v2.Normalize();
                 res = Vector3.DotProduct(v1, v2);
-                SRERWR = Math.Acos(res);
+                SRERWR += (double)Math.Acos(res);
 
                 //ER-WR-HR
                 v1 = ER - WR;
@@ -292,7 +320,7 @@ namespace TA_Bahasa_Isyarat
                 v2 = HR - WR;
                 v2 = v2.Normalize();
                 res = Vector3.DotProduct(v1, v2);
-                ERWRHR = Math.Acos(res);
+                ERWRHR += (double)Math.Acos(res);
 
                 //SC-SL-EL
                 v1 = SC - SL;
@@ -300,7 +328,7 @@ namespace TA_Bahasa_Isyarat
                 v2 = EL - SL;
                 v2 = v2.Normalize();
                 res = Vector3.DotProduct(v1, v2);
-                SCSLEL = Math.Acos(res);
+                SCSLEL += (double)Math.Acos(res);
 
                 //SL-EL-WL
                 v1 = SL - EL;
@@ -308,7 +336,7 @@ namespace TA_Bahasa_Isyarat
                 v2 = WL - EL;
                 v2 = v2.Normalize();
                 res = Vector3.DotProduct(v1, v2);
-                SLELWL = Math.Acos(res);
+                SLELWL += (double)Math.Acos(res);
 
                 //EL-WL-HL
                 v1 = EL - WL;
@@ -316,10 +344,10 @@ namespace TA_Bahasa_Isyarat
                 v2 = HL - WL;
                 v2 = v2.Normalize();
                 res = Vector3.DotProduct(v1, v2);
-                ELWLHL = Math.Acos(res);
+                ELWLHL += (double)Math.Acos(res);
 
                 //Distance HR - HL
-                DisHRHL = Vector3.Distance(HR, HL);
+                DisHRHL += Vector3.Distance(HR, HL);
 
                 (sender as BackgroundWorker).ReportProgress(progress);
                 Thread.Sleep(100);
@@ -338,6 +366,12 @@ namespace TA_Bahasa_Isyarat
             SLELWL /= 100;
             ELWLHL /= 100;
             DisHRHL /= 100;
+            //AllFeatureNormalize();
+            if(!CheckFeatureOK())
+            {
+                isNeedReboot = true;
+                return;
+            }
             sb.AppendLine(String.Format("{0}{1}{2}{3}{4}", SRER.X.ToString("0.00000"), System.Environment.NewLine, SRER.Y.ToString("0.00000"), System.Environment.NewLine, SRER.Z.ToString("0.00000")));
             sb.AppendLine(String.Format("{0}{1}{2}{3}{4}", ERWR.X.ToString("0.00000"), System.Environment.NewLine, ERWR.Y.ToString("0.00000"), System.Environment.NewLine, ERWR.Z.ToString("0.00000")));
             sb.AppendLine(String.Format("{0}{1}{2}{3}{4}", WRHR.X.ToString("0.00000"), System.Environment.NewLine, WRHR.Y.ToString("0.00000"), System.Environment.NewLine, WRHR.Z.ToString("0.00000")));
@@ -354,19 +388,25 @@ namespace TA_Bahasa_Isyarat
             sb.Append(String.Format("{0}", DisHRHL.ToString("0.00000")));
 
             int gol = 0;
-            if (SRER.Y > -0.13754)
+            if (ERWR.Y <= 0.1254)
                 gol = 1;
             else
                 gol = 2;
 
             result = true;
-            sb.Replace(",", ".");
+            
             int count = 0;
             string fullPath;
-            if(gol == 1)
+            if (gol == 1)
+            {
+                filename = string.Format("gol1.{0}", filename);
                 fullPath = @path + "gol1\\" + filename;
+            }
             else
+            {
+                filename = string.Format("gol2.{0}", filename);
                 fullPath = @path + "gol2\\" + filename;
+            }
             while (File.Exists(fullPath)) 
             {
                 string[] temp = filename.Split('.');
@@ -384,9 +424,10 @@ namespace TA_Bahasa_Isyarat
             File.AppendAllText(fullPath, sb.ToString());
 
             //Creating Weka Testing File
+            sb.Replace(",", ".");
             sb.Replace(System.Environment.NewLine, ",");
-            sb.AppendLine();
-            string wekafile = @path + filename.Split('.')[0] + ".arff";
+            sb.AppendLine("," + filename.Split('.')[1]);
+            string wekafile = @path + filename.Split('.')[1] + ".arff";
             File.AppendAllText(wekafile, sb.ToString());
 
             return;
@@ -454,18 +495,74 @@ namespace TA_Bahasa_Isyarat
                 BackPropagation bp2 = new BackPropagation();
                 bp1.Init(nn1, dsl1, cc1);
                 bp2.Init(nn2, dsl2, cc2);
-                avgError1 = bp1.Run(1000);
-                avgError2 = bp2.Run(1000);
+                avgError1 = bp1.Run(Int32.Parse(iteration_text.Text));
+                avgError2 = bp2.Run(Int32.Parse(iteration_text.Text));
             }
             else if(algorithm.Equals("BPGA"))
             {
+                GeneticAlgorithm ga1 = new GeneticAlgorithm();
+                GeneticAlgorithm ga2 = new GeneticAlgorithm();
+                ga1.Init(dsl1, cc1);
+                ga2.Init(dsl2, cc2);
 
+                Chromosom fitChrom1 = ga1.Run();
+                Chromosom fitChrom2 = ga2.Run();
+
+                seleksi1 = fitChrom1.Bit;
+                seleksi2 = fitChrom2.Bit;
+
+                for(int i = 0; i < dsl1.Count; i++)
+                {
+                    int popCount = 0;
+                    for(int j = 0; j < seleksi1.Count(); j++)
+                    {
+                        if(seleksi1[j] == 0)
+                        {
+                            dsl1[i].RemoveBit(j - popCount);
+                            popCount++;
+                        }
+                    }
+                }
+
+                for (int i = 0; i < dsl2.Count; i++)
+                {
+                    int popCount = 0;
+                    for (int j = 0; j < seleksi2.Count(); j++)
+                    {
+                        if (seleksi1[j] == 0)
+                        {
+                            dsl2[i].RemoveBit(j - popCount);
+                            popCount++;
+                        }
+                    }
+                }
+
+                nn1.InitNetwork(dsl1[0].AttributeCount, dsl1[0].AttributeCount / 2, cc1.TargetCount);
+                nn2.InitNetwork(dsl2[0].AttributeCount, dsl2[0].AttributeCount / 2, cc2.TargetCount);
+                nn1.Seed = 0;
+                nn2.Seed = 0;
+                nn1.InitWeight();
+                nn2.InitWeight();
+                BackPropagation bp1 = new BackPropagation();
+                BackPropagation bp2 = new BackPropagation();
+                bp1.Init(nn1, dsl1, cc1);
+                bp2.Init(nn2, dsl2, cc2);
+                avgError1 = bp1.Run(Int32.Parse(iteration_text.Text));
+                avgError2 = bp2.Run(Int32.Parse(iteration_text.Text));
             }
 
             NNtoXMLWriter nnw1 = new NNtoXMLWriter(nn1, avgError1);
             NNtoXMLWriter nnw2 = new NNtoXMLWriter(nn2, avgError2);
-            nnw1.Write("gol1.xml", algorithm, null);
-            nnw2.Write("gol2.xml", algorithm, null);
+            if (algorithm.Equals("BP"))
+            {
+                nnw1.Write("gol1.xml", algorithm, null);
+                nnw2.Write("gol2.xml", algorithm, null);
+            }
+            else if(algorithm.Equals("BPGA"))
+            {
+                nnw1.Write("gol1ga.xml", algorithm, seleksi1);
+                nnw2.Write("gol2ga.xml", algorithm, seleksi2);
+            }
             StatusDetail.Content = "Training Finished";
         }
 
@@ -475,6 +572,7 @@ namespace TA_Bahasa_Isyarat
             {
                 isTestingMode = true;
                 TestButton.Content = "Stop Testing";
+                StatusDetail.Content = "Testing Mode";
                 BackgroundWorker testWorker = new BackgroundWorker();
                 testWorker.WorkerReportsProgress = true;
                 testWorker.DoWork += TestWorker_DoWork;
@@ -495,12 +593,25 @@ namespace TA_Bahasa_Isyarat
             StatusDetail.Content = "Testing Finished";
         }
 
+        private void DisableAll()
+        {
+            StatusDetail.Content = "Feature Damaged, Program need to reboot";
+            TestButton.Content = "Need Reboot";
+            TrainButton.Content = "Need Reboot";
+            OutputText.Text = "Need Reboot";
+            createButton.Content = "Need Reboot";
+            comboBox.IsEnabled = false;
+            TestButton.IsEnabled = false;
+            TrainButton.IsEnabled = false;
+            createButton.IsEnabled = false;
+        }
+
         private void TestWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             int gol;
             DataSetList dsl = new DataSetList();
             List<float> fitur = new List<float>();
-            string xmlName;
+            string xmlName = "";
             fitur.Add((float)SRER.X);
             fitur.Add((float)SRER.Y);
             fitur.Add((float)SRER.Z);
@@ -529,14 +640,20 @@ namespace TA_Bahasa_Isyarat
             fitur.Add((float)SLELWL);
             fitur.Add((float)ELWLHL);
             fitur.Add((float)DisHRHL);
-            if (SRER.Y > -0.13754)
+            if (ERWR.Y <= 0.1254)
             {
-                xmlName = "gol1.xml";
+                if (algorithm.Equals("BP"))
+                    xmlName = "gol1.xml";
+                else if (algorithm.Equals("BPGA"))
+                    xmlName = "gol1ga.xml";
                 gol = 1;
             }
             else
             {
-                xmlName = "gol2.xml";
+                if (algorithm.Equals("BP"))
+                    xmlName = "gol2.xml";
+                else if (algorithm.Equals("BPGA"))
+                    xmlName = "gol2ga.xml";
                 gol = 2;
             }
             DataSet ds = new DataSet(fitur.Count);
@@ -556,23 +673,22 @@ namespace TA_Bahasa_Isyarat
             float totalselisihtemp = 0;
 
             algoTest = nnr.read(xmlName);
-            /* 
             for (int i = 0 ; i < dsl.Count; i++)
             {
-                if (algoTest.Equals("BPGA")
+                if (algoTest.Equals("BPGA"))
                 {
                     int popCount = 0;
-                    for (int j = 0 ; j < nnr.chromosom.Lenght; j++)
+                    for (int j = 0 ; j < nnr.chromosom.Length; j++)
                     {
                         if (nnr.chromosom[j] == 0)
                         {
                             dsl[i].RemoveBit(j - popCount);
-                            popCount++
+                            popCount++;
                         }
                     }
                 }
             }
-            */
+            
 
             loadNet = new NeuralNetwork();
             nnr = new NNtoXMLReader(loadNet);
@@ -597,10 +713,12 @@ namespace TA_Bahasa_Isyarat
         {
             while (isTestingMode)
             {
+                InitFeatures();
                 if (first != null)
                 {
                     for (int i = 0; i < 100; i++)
                     {
+                        if (first == null) break;
                         //Right Body
                         SR.SetVector(first.Joints[JointType.ShoulderRight].Position);
                         ER.SetVector(first.Joints[JointType.ElbowRight].Position);
@@ -632,7 +750,7 @@ namespace TA_Bahasa_Isyarat
                         v2 = ER - SR;
                         v2 = v2.Normalize();
                         res = Vector3.DotProduct(v1, v2);
-                        SCSRER = Math.Acos(res);
+                        SCSRER += (double)Math.Acos(res);
 
                         //SR-ER-WR
                         v1 = SR - ER;
@@ -640,7 +758,7 @@ namespace TA_Bahasa_Isyarat
                         v2 = WR - ER;
                         v2 = v2.Normalize();
                         res = Vector3.DotProduct(v1, v2);
-                        SRERWR = Math.Acos(res);
+                        SRERWR += (double)Math.Acos(res);
 
                         //ER-WR-HR
                         v1 = ER - WR;
@@ -648,7 +766,7 @@ namespace TA_Bahasa_Isyarat
                         v2 = HR - WR;
                         v2 = v2.Normalize();
                         res = Vector3.DotProduct(v1, v2);
-                        ERWRHR = Math.Acos(res);
+                        ERWRHR += (double)Math.Acos(res);
 
                         //SC-SL-EL
                         v1 = SC - SL;
@@ -656,7 +774,7 @@ namespace TA_Bahasa_Isyarat
                         v2 = EL - SL;
                         v2 = v2.Normalize();
                         res = Vector3.DotProduct(v1, v2);
-                        SCSLEL = Math.Acos(res);
+                        SCSLEL += (double)Math.Acos(res);
 
                         //SL-EL-WL
                         v1 = SL - EL;
@@ -664,7 +782,7 @@ namespace TA_Bahasa_Isyarat
                         v2 = WL - EL;
                         v2 = v2.Normalize();
                         res = Vector3.DotProduct(v1, v2);
-                        SLELWL = Math.Acos(res);
+                        SLELWL += (double)Math.Acos(res);
 
                         //EL-WL-HL
                         v1 = EL - WL;
@@ -672,10 +790,10 @@ namespace TA_Bahasa_Isyarat
                         v2 = HL - WL;
                         v2 = v2.Normalize();
                         res = Vector3.DotProduct(v1, v2);
-                        ELWLHL = Math.Acos(res);
+                        ELWLHL += (double)Math.Acos(res);
 
                         //Distance HR - HL
-                        DisHRHL = Vector3.Distance(HR, HL);
+                        DisHRHL += Vector3.Distance(HR, HL);
                     }
                     SRER /= 100;
                     ERWR /= 100;
@@ -691,10 +809,79 @@ namespace TA_Bahasa_Isyarat
                     SLELWL /= 100;
                     ELWLHL /= 100;
                     DisHRHL /= 100;
+                    //AllFeatureNormalize();
                     (sender as BackgroundWorker).ReportProgress(1);
-                    Thread.Sleep(3);
+                    Thread.Sleep(3000);
                 }
             }
+        }
+
+        private void AllFeatureNormalize()
+        {
+            SRER = Features.FeatureNorm(SRER);
+            ERWR = Features.FeatureNorm(ERWR);
+            WRHR = Features.FeatureNorm(WRHR);
+            SLEL = Features.FeatureNorm(SLEL);
+            ELWL = Features.FeatureNorm(ELWL);
+            WLHL = Features.FeatureNorm(WLHL);
+            HRHL = Features.FeatureNorm(HRHL);
+            SCSRER /= 180;
+            SRERWR /= 180;
+            ERWRHR /= 180;
+            SCSLEL /= 180;
+            SLELWL /= 180;
+            ELWLHL /= 180;
+            DisHRHL /= 3.4641f;
+        }
+
+        private void comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            StatusDetail.Content = "Algorithm Changed";
+            if (comboBox.SelectedIndex == 0)
+                algorithm = "BP";
+            else if (comboBox.SelectedIndex == 1)
+                algorithm = "BPGA";
+        }
+
+        private bool CheckFeatureOK()
+        {
+            List<float> fitur = new List<float>();
+            fitur.Add((float)SRER.X);
+            fitur.Add((float)SRER.Y);
+            fitur.Add((float)SRER.Z);
+            fitur.Add((float)ERWR.X);
+            fitur.Add((float)ERWR.Y);
+            fitur.Add((float)ERWR.Z);
+            fitur.Add((float)WRHR.X);
+            fitur.Add((float)WRHR.Y);
+            fitur.Add((float)WRHR.Z);
+            fitur.Add((float)SLEL.X);
+            fitur.Add((float)SLEL.Y);
+            fitur.Add((float)SLEL.Z);
+            fitur.Add((float)ELWL.X);
+            fitur.Add((float)ELWL.Y);
+            fitur.Add((float)ELWL.Z);
+            fitur.Add((float)WLHL.X);
+            fitur.Add((float)WLHL.Y);
+            fitur.Add((float)WLHL.Z);
+            fitur.Add((float)HRHL.X);
+            fitur.Add((float)HRHL.Y);
+            fitur.Add((float)HRHL.Z);
+            fitur.Add((float)SCSRER);
+            fitur.Add((float)SRERWR);
+            fitur.Add((float)ERWRHR);
+            fitur.Add((float)SCSLEL);
+            fitur.Add((float)SLELWL);
+            fitur.Add((float)ELWLHL);
+            fitur.Add((float)DisHRHL);
+            for(int i = 0; i < fitur.Count; i++)
+            {
+                if (float.IsNaN(fitur[i]))
+                {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }

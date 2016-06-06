@@ -61,6 +61,7 @@
     <Compile Include="ClassificationClass.cs" />
     <Compile Include="DataSet.cs" />
     <Compile Include="DataSetList.cs" />
+    <Compile Include="Features.cs" />
     <Compile Include="FeedForward.cs" />
     <Compile Include="FileReader.cs" />
     <Compile Include="GeneticAlgorithm.cs" />

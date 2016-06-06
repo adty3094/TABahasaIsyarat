@@ -29,7 +29,7 @@ namespace TA_Bahasa_Isyarat
 
                 DataSet ds = new DataSet(attr.Count);
                 ds.ClassName = className;
-                for(int i = 0; i > attr.Count; i++)
+                for(int i = 0; i < attr.Count; i++)
                 {
                     ds[i] = attr[i];
                 }

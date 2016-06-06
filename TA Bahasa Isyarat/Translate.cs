@@ -11,7 +11,7 @@ namespace TA_Bahasa_Isyarat
         private int[] actualClass;
         private int dec = 0;
         private List<string> kata = new List<string>();
-        private int[] p;
+        //private int[] p;
         private int sum;
 
         public Translate()
@@ -27,7 +27,7 @@ namespace TA_Bahasa_Isyarat
 
         public Translate(int[] p, int sum)
         {
-            this.p = p;
+            actualClass = p;
             this.sum = sum;
         }
 
@@ -50,7 +50,7 @@ namespace TA_Bahasa_Isyarat
             int iter = cc.TargetCount;
             int index = 0;
             for (int i = 0, faktor = 1; i < iter; i++, faktor *= 2)
-                index += p[i] * faktor;
+                index += actualClass[i] * faktor;
             return kata[index];
         }
     }

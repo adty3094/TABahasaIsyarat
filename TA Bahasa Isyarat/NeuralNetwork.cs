@@ -15,7 +15,7 @@ namespace TA_Bahasa_Isyarat
             set { random = new Random(value); }
         }
 
-        public float threshold = 0.5f;
+        public float threshold = 0.3f;
 
         public List<Node> InputLayer { set; get; }
         public List<Node> HiddenLayer { set; get; }
