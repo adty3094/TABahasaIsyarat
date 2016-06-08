@@ -14,6 +14,15 @@ namespace TA_Bahasa_Isyarat
         //private int[] p;
         private int sum;
 
+        public int this[int index]
+        {
+            get { return actualClass[index]; }
+        }
+        
+        public int GetActualClassLength()
+        {
+            return this.actualClass.Length;
+        }
         public Translate()
         {
 
@@ -47,10 +56,12 @@ namespace TA_Bahasa_Isyarat
         public string Result(ClassificationClass cc)
         {
             Init(cc);
-            int iter = cc.TargetCount;
             int index = 0;
-            for (int i = 0, faktor = 1; i < iter; i++, faktor *= 2)
+            for (int i = cc.TargetCount - 1; i > -1; i--)
+            {
+                int faktor = (int)Math.Pow(2, i);
                 index += actualClass[i] * faktor;
+            }
             return kata[index];
         }
     }

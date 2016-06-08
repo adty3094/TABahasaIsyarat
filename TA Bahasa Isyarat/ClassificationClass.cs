@@ -11,9 +11,14 @@ namespace TA_Bahasa_Isyarat
         private List<string> classList = new List<string>();
         private int[] actualClass;
 
+        public string this[int index]
+        {
+            get { return this.classList[index]; }
+        }
+
         public List<string> GetClassList()
         {
-            return classList;
+            return this.classList;
         }
 
         public int TargetCount

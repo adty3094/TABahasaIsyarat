@@ -12,8 +12,8 @@ namespace TA_Bahasa_Isyarat
         public DataSetList ReadFile(string path, ClassificationClass cc)
         {
             DirectoryInfo dirInfo = new DirectoryInfo(path);
-            FileInfo[] fileInfo = dirInfo.GetFiles("*.txt"); 
-
+            FileInfo[] fileInfo = dirInfo.GetFiles("*.txt");
+            cc.Clear();
             DataSetList dsl = new DataSetList();
             foreach(FileInfo file in fileInfo)
             {
