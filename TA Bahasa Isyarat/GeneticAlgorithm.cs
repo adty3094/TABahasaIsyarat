@@ -83,7 +83,7 @@ namespace TA_Bahasa_Isyarat
 
                 BackPropagation bp = new BackPropagation();
                 bp.Init(nn, dsl, classificationClass);
-                bp.Run(1000);
+                bp.Run(5000);
 
                 FeedForward ff = new FeedForward();
                 ff.Init(nn, dsl);

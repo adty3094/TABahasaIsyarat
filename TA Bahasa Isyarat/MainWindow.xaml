@@ -6,13 +6,13 @@
         xmlns:local="clr-namespace:TA_Bahasa_Isyarat"
         xmlns:WpfViewers="clr-namespace:Microsoft.Samples.Kinect.WpfViewers;assembly=Microsoft.Samples.Kinect.WpfViewers" xmlns:System="clr-namespace:System;assembly=mscorlib" x:Class="TA_Bahasa_Isyarat.MainWindow"
         mc:Ignorable="d"
-        Title="MainWindow" Height="810.5" Width="1063" Loaded="Window_Loaded" Closed="Window_Closed">
+        Title="MainWindow" Height="774.5" Width="1063" Loaded="Window_Loaded" Closed="Window_Closed">
     <Grid Margin="0,0,2,0">
 
         <WpfViewers:KinectColorViewer x:Name="ColorView" HorizontalAlignment="Left" Height="480" Margin="10,10,0,0" VerticalAlignment="Top" Width="640"/>
         <WpfViewers:KinectSkeletonViewer x:Name="SkeletonView" HorizontalAlignment="Left" Height="480" Margin="10,10,0,0" VerticalAlignment="Top" Width="640"/>
-        <Label x:Name="StatusDetail" Content="" HorizontalAlignment="Left" Height="38" Margin="99,731,0,0" VerticalAlignment="Top" Width="689" FontSize="16"/>
-        <Label x:Name="label1" Content="Status:" HorizontalAlignment="Left" Margin="10,731,0,0" VerticalAlignment="Top" Width="100" FontSize="16"/>
+        <Label x:Name="StatusDetail" Content="asd" HorizontalAlignment="Left" Height="47" Margin="109,686,0,0" VerticalAlignment="Top" Width="689" FontSize="24"/>
+        <Label x:Name="label1" Content="Status:" HorizontalAlignment="Left" Margin="10,686,0,0" VerticalAlignment="Top" Width="100" FontSize="24" Height="47"/>
         <Label x:Name="label1_Copy" Content="Create New Gesture" HorizontalAlignment="Left" Margin="29,506,0,0" VerticalAlignment="Top" Width="152" FontSize="16"/>
         <TextBox x:Name="fileName" HorizontalAlignment="Left" Height="28" Margin="35,578,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="146" FontSize="16"/>
         <Button x:Name="createButton" Content="Create File" HorizontalAlignment="Left" Margin="35,624,0,0" VerticalAlignment="Top" Width="75" Click="createButton_click"/>
@@ -48,7 +48,6 @@
         <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="171" Margin="661,247,0,0" VerticalAlignment="Top" Width="171"/>
         <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="72" Margin="864,247,0,0" VerticalAlignment="Top" Width="179"/>
         <Label x:Name="outputText" Content="" HorizontalAlignment="Left" Margin="864,256,0,0" VerticalAlignment="Top" Height="48" Width="179" FontSize="26.667"/>
-        <Label x:Name="label" Content="Label" HorizontalAlignment="Left" VerticalAlignment="Top"/>
         <Label x:Name="label3" Content="Log" HorizontalAlignment="Left" Margin="794,452,0,0" VerticalAlignment="Top"/>
         <Label x:Name="label4" Content="ERWR.Y" HorizontalAlignment="Left" Margin="794,483,0,0" VerticalAlignment="Top"/>
         <Label x:Name="Log_ERWRY" Content="" HorizontalAlignment="Left" Margin="875,483,0,0" VerticalAlignment="Top" Width="168"/>

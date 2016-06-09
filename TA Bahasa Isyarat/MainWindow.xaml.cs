@@ -148,24 +148,32 @@ namespace TA_Bahasa_Isyarat
             string group1path = path + "gol1\\";
             string group2path = path + "gol2\\";
             DirectoryInfo dirInfo1 = new DirectoryInfo(group1path);
-            FileInfo[] files1 = dirInfo1.GetFiles("*.class");
+            FileInfo[] files1 = dirInfo1.GetFiles("*.txt");
             DirectoryInfo dirInfo2 = new DirectoryInfo(group2path);
-            FileInfo[] files2 = dirInfo2.GetFiles("*.class");
+            FileInfo[] files2 = dirInfo2.GetFiles("*.txt");
             cc1 = new ClassificationClass();
             cc2 = new ClassificationClass();
 
             group1Gesture.Items.Clear();
             foreach(FileInfo f in files1)
             {
-                cc1.Add(f.Name.Split('.')[0]);
-                group1Gesture.Items.Add(f.Name.Split('.')[0]);
+                string className = f.Name.Split('.')[1];
+                if (cc1.GetIndex(className) == -1)
+                {
+                    cc1.Add(className);
+                    group1Gesture.Items.Add(className);
+                }
             }
 
             group2Gesture.Items.Clear();
             foreach (FileInfo f in files2)
             {
-                cc2.Add(f.Name.Split('.')[0]);
-                group2Gesture.Items.Add(f.Name.Split('.')[0]);
+                string className = f.Name.Split('.')[1];
+                if (cc2.GetIndex(className) == -1)
+                {
+                    cc2.Add(className);
+                    group2Gesture.Items.Add(className);
+                }
             }
         }
 
@@ -343,7 +351,7 @@ namespace TA_Bahasa_Isyarat
                 DisHRHL += Vector3.Distance(HR, HL);
 
                 (sender as BackgroundWorker).ReportProgress(progress);
-                Thread.Sleep(100);
+                Thread.Sleep(10);
             }
             SRER /= 100;
             ERWR /= 100;
@@ -359,7 +367,7 @@ namespace TA_Bahasa_Isyarat
             SLELWL /= 100;
             ELWLHL /= 100;
             DisHRHL /= 100;
-            //AllFeatureNormalize();
+            AllFeatureNormalize();
             if(!CheckFeatureOK())
             {
                 isNeedReboot = true;
@@ -390,18 +398,15 @@ namespace TA_Bahasa_Isyarat
             
             int count = 0;
             string fullPath;
-            string classPath;
             if (gol == 1)
             {
                 filename = string.Format("gol1.{0}", filename);
-                fullPath = @path + "gol1\\" + filename;
-                classPath = @path + "gol1\\";
+                fullPath = @path + "gol1-normalize\\" + filename;
             }
             else
             {
                 filename = string.Format("gol2.{0}", filename);
-                fullPath = @path + "gol2\\" + filename;
-                classPath = @path + "gol2\\";
+                fullPath = @path + "gol2-normalize\\" + filename;
             }
             while (File.Exists(fullPath)) 
             {
@@ -413,13 +418,11 @@ namespace TA_Bahasa_Isyarat
                     filename = String.Format("gol2.{0}.{1}.txt", temp[1], count.ToString());
 
                 if (gol == 1)
-                    fullPath = @path + "gol1\\" + filename;
+                    fullPath = @path + "gol1-normalize\\" + filename;
                 else
-                    fullPath = @path + "gol2\\" + filename;
+                    fullPath = @path + "gol2-normalize\\" + filename;
             }
             File.AppendAllText(fullPath, sb.ToString());
-            if (!File.Exists(string.Format("{0}{1}.class", classPath + filename.Split('.')[1])))
-                File.Create(string.Format("{0}{1}.class", classPath + filename.Split('.')[1]));
 
             //Creating Weka Testing File
             sb.Replace(",", ".");
@@ -490,11 +493,18 @@ namespace TA_Bahasa_Isyarat
                 ga1.Init(dsl1, cc1);
                 ga2.Init(dsl2, cc2);
 
-                Chromosom fitChrom1 = ga1.Run();
-                Chromosom fitChrom2 = ga2.Run();
+                //Chromosom fitChrom1 = ga1.Run();
+                //Chromosom fitChrom2 = ga2.Run();
 
-                seleksi1 = fitChrom1.Bit;
-                seleksi2 = fitChrom2.Bit;
+                loadNet = new NeuralNetwork();
+                NNtoXMLReader nnr = new NNtoXMLReader(loadNet);
+                algoTest = nnr.read("gol1ga.xml");
+                seleksi1 = nnr.chromosom;
+
+                loadNet = new NeuralNetwork();
+                nnr = new NNtoXMLReader(loadNet);
+                algoTest = nnr.read("gol2ga.xml");
+                seleksi2 = nnr.chromosom;
 
                 for(int i = 0; i < dsl1.Count; i++)
                 {
@@ -514,7 +524,7 @@ namespace TA_Bahasa_Isyarat
                     int popCount = 0;
                     for (int j = 0; j < seleksi2.Count(); j++)
                     {
-                        if (seleksi1[j] == 0)
+                        if (seleksi2[j] == 0)
                         {
                             dsl2[i].RemoveBit(j - popCount);
                             popCount++;
@@ -605,117 +615,124 @@ namespace TA_Bahasa_Isyarat
 
         private void TestWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            int gol;
-            DataSetList dsl = new DataSetList();
-            List<float> fitur = new List<float>();
-            string xmlName = "";
-            fitur.Add((float)SRER.X);
-            fitur.Add((float)SRER.Y);
-            fitur.Add((float)SRER.Z);
-            fitur.Add((float)ERWR.X);
-            fitur.Add((float)ERWR.Y);
-            fitur.Add((float)ERWR.Z);
-            fitur.Add((float)WRHR.X);
-            fitur.Add((float)WRHR.Y);
-            fitur.Add((float)WRHR.Z);
-            fitur.Add((float)SLEL.X);
-            fitur.Add((float)SLEL.Y);
-            fitur.Add((float)SLEL.Z);
-            fitur.Add((float)ELWL.X);
-            fitur.Add((float)ELWL.Y);
-            fitur.Add((float)ELWL.Z);
-            fitur.Add((float)WLHL.X);
-            fitur.Add((float)WLHL.Y);
-            fitur.Add((float)WLHL.Z);
-            fitur.Add((float)HRHL.X);
-            fitur.Add((float)HRHL.Y);
-            fitur.Add((float)HRHL.Z);
-            fitur.Add((float)SCSRER);
-            fitur.Add((float)SRERWR);
-            fitur.Add((float)ERWRHR);
-            fitur.Add((float)SCSLEL);
-            fitur.Add((float)SLELWL);
-            fitur.Add((float)ELWLHL);
-            fitur.Add((float)DisHRHL);
-            if (ERWR.Y < 0.53)
+            try
             {
-                if (algorithm.Equals("BP"))
-                    xmlName = "gol1.xml";
-                else if (algorithm.Equals("BPGA"))
-                    xmlName = "gol1ga.xml";
-                gol = 1;
-            }
-            else
-            {
-                if (algorithm.Equals("BP"))
-                    xmlName = "gol2.xml";
-                else if (algorithm.Equals("BPGA"))
-                    xmlName = "gol2ga.xml";
-                gol = 2;
-            }
-            DataSet ds = new DataSet(fitur.Count);
-            for(int i = 0; i < fitur.Count; i++)
-            {
-                ds[i] = float.Parse(fitur[i].ToString("0.00000"));
-            }
-
-            dsl.Add(ds);
-
-            FeedForward ff = new FeedForward();
-            loadNet = new NeuralNetwork();
-            NNtoXMLReader nnr = new NNtoXMLReader(loadNet);
-            float[] totalSelisih = new float[3];
-            Translate t = new Translate();
-
-            float totalselisihtemp = 0;
-
-            algoTest = nnr.read(xmlName);
-            for (int i = 0 ; i < dsl.Count; i++)
-            {
-                if (algoTest.Equals("BPGA"))
+                int gol;
+                DataSetList dsl = new DataSetList();
+                List<float> fitur = new List<float>();
+                string xmlName = "";
+                fitur.Add((float)SRER.X);
+                fitur.Add((float)SRER.Y);
+                fitur.Add((float)SRER.Z);
+                fitur.Add((float)ERWR.X);
+                fitur.Add((float)ERWR.Y);
+                fitur.Add((float)ERWR.Z);
+                fitur.Add((float)WRHR.X);
+                fitur.Add((float)WRHR.Y);
+                fitur.Add((float)WRHR.Z);
+                fitur.Add((float)SLEL.X);
+                fitur.Add((float)SLEL.Y);
+                fitur.Add((float)SLEL.Z);
+                fitur.Add((float)ELWL.X);
+                fitur.Add((float)ELWL.Y);
+                fitur.Add((float)ELWL.Z);
+                fitur.Add((float)WLHL.X);
+                fitur.Add((float)WLHL.Y);
+                fitur.Add((float)WLHL.Z);
+                fitur.Add((float)HRHL.X);
+                fitur.Add((float)HRHL.Y);
+                fitur.Add((float)HRHL.Z);
+                fitur.Add((float)SCSRER);
+                fitur.Add((float)SRERWR);
+                fitur.Add((float)ERWRHR);
+                fitur.Add((float)SCSLEL);
+                fitur.Add((float)SLELWL);
+                fitur.Add((float)ELWLHL);
+                fitur.Add((float)DisHRHL);
+                if (ERWR.Y < 0.53)
                 {
-                    int popCount = 0;
-                    for (int j = 0 ; j < nnr.chromosom.Length; j++)
+                    if (algorithm.Equals("BP"))
+                        xmlName = "gol1.xml";
+                    else if (algorithm.Equals("BPGA"))
+                        xmlName = "gol1ga.xml";
+                    gol = 1;
+                }
+                else
+                {
+                    if (algorithm.Equals("BP"))
+                        xmlName = "gol2.xml";
+                    else if (algorithm.Equals("BPGA"))
+                        xmlName = "gol2ga.xml";
+                    gol = 2;
+                }
+                DataSet ds = new DataSet(fitur.Count);
+                for (int i = 0; i < fitur.Count; i++)
+                {
+                    ds[i] = fitur[i];
+                }
+
+                dsl.Add(ds);
+
+                FeedForward ff = new FeedForward();
+                loadNet = new NeuralNetwork();
+                NNtoXMLReader nnr = new NNtoXMLReader(loadNet);
+                float[] totalSelisih = new float[3];
+                Translate t = new Translate();
+
+                float totalselisihtemp = 0;
+
+                algoTest = nnr.read(xmlName);
+                for (int i = 0; i < dsl.Count; i++)
+                {
+                    if (algoTest.Equals("BPGA"))
                     {
-                        if (nnr.chromosom[j] == 0)
+                        int popCount = 0;
+                        for (int j = 0; j < nnr.chromosom.Length; j++)
                         {
-                            dsl[i].RemoveBit(j - popCount);
-                            popCount++;
+                            if (nnr.chromosom[j] == 0)
+                            {
+                                dsl[i].RemoveBit(j - popCount);
+                                popCount++;
+                            }
                         }
                     }
                 }
+
+
+                loadNet = new NeuralNetwork();
+                nnr = new NNtoXMLReader(loadNet);
+                nnr.read(xmlName);
+
+                ff = new FeedForward();
+                ff.Init(loadNet, dsl);
+                for (int i = 0; i < dsl.Count; i++)
+                    ff.Run(i);
+
+                t = new Translate(ff.GetActualClass());
+
+                totalSelisih = new float[3];
+
+                if (gol == 1)
+                    outputText.Content = t.Result(cc1);
+                else if (gol == 2)
+                    outputText.Content = t.Result(cc2);
+                string imageFullPath = @imagePath + outputText.Content + ".bmp";
+                if (File.Exists(imageFullPath))
+                    outputImage.Source = (ImageSource)new ImageSourceConverter().ConvertFrom(imageFullPath);
+                Log_ERWRY.Content = ERWR.Y;
+                string actualClass = "";
+                for (int i = 0; i < t.GetActualClassLength(); i++)
+                    actualClass += t[i];
+                Log_ActualClass.Content = actualClass;
+                outputList.Items.Clear();
+                for (int i = 0; i < loadNet.OutputLayer.Count; i++)
+                    outputList.Items.Add(loadNet.OutputLayer[i].Input);
+                StatusDetail.Content = "Testing Mode";
             }
-            
-
-            loadNet = new NeuralNetwork();
-            nnr = new NNtoXMLReader(loadNet);
-            nnr.read(xmlName);
-
-            ff = new FeedForward();
-            ff.Init(loadNet, dsl);
-            for (int i = 0; i < dsl.Count; i++)
-                ff.Run(i);
-
-            t = new Translate(ff.GetActualClass());
-
-            totalSelisih = new float[3];
-
-            if (gol == 1)
-                outputText.Content = t.Result(cc1);
-            else if (gol == 2)
-                outputText.Content = t.Result(cc2);
-            string imageFullPath = @imagePath + outputText.Content + ".bmp";
-            outputImage.Source = (ImageSource)new ImageSourceConverter().ConvertFrom(imageFullPath);
-            Log_ERWRY.Content = ERWR.Y;
-            string actualClass = "";
-            for (int i = 0; i < t.GetActualClassLength(); i++)
-                actualClass += t[i];
-            Log_ActualClass.Content = actualClass;
-            outputList.Items.Clear();
-            for (int i = 0; i < loadNet.OutputLayer.Count; i++)
-                outputList.Items.Add(loadNet.OutputLayer[i].Input);
-
-
+            catch
+            {
+                StatusDetail.Content = "Testing Error";
+            }
         }
 
         private void TestWorker_DoWork(object sender, DoWorkEventArgs e)
@@ -740,7 +757,6 @@ namespace TA_Bahasa_Isyarat
                         HL.SetVector(first.Joints[JointType.HandLeft].Position);
                         //Center Body
                         SC.SetVector(first.Joints[JointType.ShoulderCenter].Position);
-                        Head.SetVector(first.Joints[JointType.Head].Position);
 
                         SRER += ER - SR;
                         ERWR += WR - ER;
@@ -896,8 +912,14 @@ namespace TA_Bahasa_Isyarat
         private void button_Click(object sender, RoutedEventArgs e)
         {
             int angle = (int)slider.Value;
-            while (mainSensor.Status == KinectStatus.NotReady) continue;
-            mainSensor.ElevationAngle = angle;
+            try
+            {
+                mainSensor.ElevationAngle = angle;
+            }
+            catch
+            {
+                StatusDetail.Content = "Failed to chanage Kinect Angle";
+            }
         }
 
         private void OneTestButton_Click(object sender, RoutedEventArgs e)
@@ -971,7 +993,7 @@ namespace TA_Bahasa_Isyarat
                     DataSet ds = new DataSet(fitur.Count);
                     for (int i = 0; i < fitur.Count; i++)
                     {
-                        ds[i] = float.Parse(fitur[i].ToString("0.00000"));
+                        ds[i] = fitur[i];
                     }
 
                     dsl.Add(ds);
@@ -979,10 +1001,7 @@ namespace TA_Bahasa_Isyarat
                     FeedForward ff = new FeedForward();
                     loadNet = new NeuralNetwork();
                     NNtoXMLReader nnr = new NNtoXMLReader(loadNet);
-                    float[] totalSelisih = new float[3];
                     Translate t = new Translate();
-
-                    float totalselisihtemp = 0;
 
                     algoTest = nnr.read(xmlName);
                     for (int i = 0; i < dsl.Count; i++)
@@ -1019,14 +1038,13 @@ namespace TA_Bahasa_Isyarat
                     for(int i = 0; i < actualClass.Length; i++)
                         actualClassLog += actualClass[i];
 
-                    totalSelisih = new float[3];
-
                     if (gol == 1)
                         outputText.Content = t.Result(cc1);
                     else if (gol == 2)
                         outputText.Content = t.Result(cc2);
                     string imageFullPath = @imagePath + outputText.Content + ".bmp";
-                    outputImage.Source = (ImageSource)new ImageSourceConverter().ConvertFrom(imageFullPath);
+                    if (File.Exists(imageFullPath)) 
+                        outputImage.Source = (ImageSource)new ImageSourceConverter().ConvertFrom(imageFullPath);
                     Log_ERWRY.Content = ERWR.Y.ToString();
                     outputList.Items.Clear();
                     for (int i = 0; i < loadNet.OutputLayer.Count(); i++)

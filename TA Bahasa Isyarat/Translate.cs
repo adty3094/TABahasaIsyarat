@@ -12,6 +12,7 @@ namespace TA_Bahasa_Isyarat
         private int dec = 0;
         private List<string> kata = new List<string>();
         //private int[] p;
+        private string binary = "";
         private int sum;
 
         public int this[int index]
@@ -31,6 +32,11 @@ namespace TA_Bahasa_Isyarat
         public Translate(int[] p)
         {
             this.actualClass = p;
+            for(int i = 0; i < p.Length; i++)
+            {
+                binary += Convert.ToString(p[i]);
+            }
+
             
         }
 
@@ -56,13 +62,14 @@ namespace TA_Bahasa_Isyarat
         public string Result(ClassificationClass cc)
         {
             Init(cc);
-            int index = 0;
-            for (int i = cc.TargetCount - 1; i > -1; i--)
+            /*int index = 0;
+            for (int i = 0; i < cc.TargetCount; i++)
             {
                 int faktor = (int)Math.Pow(2, i);
                 index += actualClass[i] * faktor;
-            }
-            return kata[index];
+            }*/
+            string hasil = kata[Convert.ToInt32(binary, 2)];
+            return hasil;
         }
     }
 }
