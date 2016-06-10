@@ -43,7 +43,8 @@ namespace TA_Bahasa_Isyarat
         bool result;
         bool isFirstNull;
         bool isTestingMode = false;
-        bool isFeatureBad;
+        bool isHaveNaN;
+        bool isHaveBadValue;
         bool isNeedReboot = false;
         int phase;
         string algorithm = "BP";
@@ -236,6 +237,8 @@ namespace TA_Bahasa_Isyarat
             {
                 DisableAll();
             }
+            else if (isHaveBadValue)
+                StatusDetail.Content = "Features Have value out of range ( 0.0 - 1.0 )";
             else if (result)
             {
                 StatusDetail.Content = "File Created";
@@ -370,7 +373,8 @@ namespace TA_Bahasa_Isyarat
             AllFeatureNormalize();
             if(!CheckFeatureOK())
             {
-                isNeedReboot = true;
+                if(isHaveNaN)
+                    isNeedReboot = true;
                 return;
             }
             sb.AppendLine(String.Format("{0}{1}{2}{3}{4}", SRER.X.ToString("0.00000"), System.Environment.NewLine, SRER.Y.ToString("0.00000"), System.Environment.NewLine, SRER.Z.ToString("0.00000")));
@@ -597,7 +601,16 @@ namespace TA_Bahasa_Isyarat
 
         private void TestWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            StatusDetail.Content = "Testing Finished";
+            if (isNeedReboot)
+                DisableAll();
+            else if (isHaveBadValue)
+            {
+                isTestingMode = false;
+                TestButton.Content = "Start Testing";
+                StatusDetail.Content = "Features Have value out of range ( 0.0 - 1.0 )";
+            }
+            else
+                StatusDetail.Content = "Testing Finished";
         }
 
         private void DisableAll()
@@ -835,6 +848,12 @@ namespace TA_Bahasa_Isyarat
                     ELWLHL /= 100;
                     DisHRHL /= 100;
                     AllFeatureNormalize();
+                    if (!CheckFeatureOK())
+                    {
+                        if (isHaveNaN)
+                            isNeedReboot = true;
+                        return;
+                    }
                     (sender as BackgroundWorker).ReportProgress(1);
                     Thread.Sleep(3000);
                 }
@@ -903,9 +922,19 @@ namespace TA_Bahasa_Isyarat
             {
                 if (float.IsNaN(fitur[i]))
                 {
+                    isHaveNaN = true;
+                    isHaveBadValue = false;
+                    return false;
+                }
+                else if(fitur[i] > 1 || fitur[i] < 0)
+                {
+                    isHaveBadValue = true;
+                    isHaveNaN = false;
                     return false;
                 }
             }
+            isHaveBadValue = false;
+            isHaveNaN = false;
             return true;
         }
 
@@ -937,6 +966,10 @@ namespace TA_Bahasa_Isyarat
             if (isNeedReboot)
             {
                 DisableAll();
+            }
+            else if(isHaveBadValue)
+            {
+                StatusDetail.Content = "Features Have value out of range ( 0.0 - 1.0 )";
             }
             else if (result)
             {
@@ -1187,7 +1220,8 @@ namespace TA_Bahasa_Isyarat
             AllFeatureNormalize();
             if (!CheckFeatureOK())
             {
-                isNeedReboot = true;
+                if(isHaveNaN)
+                    isNeedReboot = true;
                 return;
             }
             result = true;
