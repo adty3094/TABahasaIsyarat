@@ -4,7 +4,7 @@
 library
 C#
 .cs
-D:\Kinect\KinectWpfViewers\obj\Debug\
+D:\Kinect Dev\TA Bahasa Isyarat\KinectWpfViewers\obj\Debug\
 Microsoft.Samples.Kinect.WpfViewers
 none
 false
@@ -16,5 +16,5 @@ DEBUG;TRACE
 15640151164
 KinectAudioViewer.xaml;KinectDepthViewer.xaml;KinectColorViewer.xaml;KinectSettings.xaml;KinectSkeletonViewer.xaml;KinectVoiceCommandViewer.xaml;
 
-False
+True
 
