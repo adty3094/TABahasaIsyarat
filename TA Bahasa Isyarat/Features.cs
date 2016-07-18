@@ -8,14 +8,23 @@ namespace TA_Bahasa_Isyarat
 {
     public class Features
     {
-        public static double Normalize(double x)
+        public static Vector3 VectorFeatureNorm(Vector3 u)
         {
-            return (x + 2) / 4;
+            Vector3 newVector = new Vector3();
+            newVector.X = (u.X + 2) / 4;
+            newVector.Y = (u.Y + 2) / 4;
+            newVector.Z = (u.Z + 2) / 4;
+            return newVector;
         }
 
-        public static Vector3 FeatureNorm(Vector3 u)
+        public static double AngleFeatureNorm(double n)
         {
-            return new Vector3(Normalize(u.X), Normalize(u.Y), Normalize(u.Z));
+            return n / Math.PI;
+        }
+
+        public static double DistanceFeatureNorm(double n)
+        {
+            return n / 3.4641f;
         }
     }
 }

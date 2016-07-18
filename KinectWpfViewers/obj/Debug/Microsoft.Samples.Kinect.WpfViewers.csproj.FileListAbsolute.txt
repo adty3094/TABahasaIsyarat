@@ -23,3 +23,28 @@ D:\Kinect\KinectWpfViewers\obj\Debug\Microsoft.Samples.Kinect.WpfViewers.Propert
 D:\Kinect\KinectWpfViewers\obj\Debug\Microsoft.Samples.Kinect.WpfViewers.csproj.GenerateResource.Cache
 D:\Kinect\KinectWpfViewers\obj\Debug\Microsoft.Samples.Kinect.WpfViewers.dll
 D:\Kinect\KinectWpfViewers\obj\Debug\Microsoft.Samples.Kinect.WpfViewers.pdb
+D:\Kinect Dev\TA Bahasa Isyarat\KinectWpfViewers\bin\Debug\Microsoft.Samples.Kinect.WpfViewers.dll
+D:\Kinect Dev\TA Bahasa Isyarat\KinectWpfViewers\bin\Debug\Microsoft.Samples.Kinect.WpfViewers.pdb
+D:\Kinect Dev\TA Bahasa Isyarat\KinectWpfViewers\bin\Debug\Microsoft.Kinect.dll
+D:\Kinect Dev\TA Bahasa Isyarat\KinectWpfViewers\bin\Debug\Microsoft.Kinect.xml
+D:\Kinect Dev\TA Bahasa Isyarat\KinectWpfViewers\obj\Debug\Microsoft.Samples.Kinect.WpfViewers.csprojResolveAssemblyReference.cache
+D:\Kinect Dev\TA Bahasa Isyarat\KinectWpfViewers\obj\Debug\KinectAudioViewer.g.cs
+D:\Kinect Dev\TA Bahasa Isyarat\KinectWpfViewers\obj\Debug\KinectDepthViewer.g.cs
+D:\Kinect Dev\TA Bahasa Isyarat\KinectWpfViewers\obj\Debug\KinectColorViewer.g.cs
+D:\Kinect Dev\TA Bahasa Isyarat\KinectWpfViewers\obj\Debug\KinectSettings.g.cs
+D:\Kinect Dev\TA Bahasa Isyarat\KinectWpfViewers\obj\Debug\KinectSkeletonViewer.g.cs
+D:\Kinect Dev\TA Bahasa Isyarat\KinectWpfViewers\obj\Debug\KinectVoiceCommandViewer.g.cs
+D:\Kinect Dev\TA Bahasa Isyarat\KinectWpfViewers\obj\Debug\GeneratedInternalTypeHelper.g.cs
+D:\Kinect Dev\TA Bahasa Isyarat\KinectWpfViewers\obj\Debug\Microsoft.Samples.Kinect.WpfViewers_MarkupCompile.cache
+D:\Kinect Dev\TA Bahasa Isyarat\KinectWpfViewers\obj\Debug\Microsoft.Samples.Kinect.WpfViewers_MarkupCompile.lref
+D:\Kinect Dev\TA Bahasa Isyarat\KinectWpfViewers\obj\Debug\KinectAudioViewer.baml
+D:\Kinect Dev\TA Bahasa Isyarat\KinectWpfViewers\obj\Debug\KinectDepthViewer.baml
+D:\Kinect Dev\TA Bahasa Isyarat\KinectWpfViewers\obj\Debug\KinectColorViewer.baml
+D:\Kinect Dev\TA Bahasa Isyarat\KinectWpfViewers\obj\Debug\KinectSettings.baml
+D:\Kinect Dev\TA Bahasa Isyarat\KinectWpfViewers\obj\Debug\KinectSkeletonViewer.baml
+D:\Kinect Dev\TA Bahasa Isyarat\KinectWpfViewers\obj\Debug\KinectVoiceCommandViewer.baml
+D:\Kinect Dev\TA Bahasa Isyarat\KinectWpfViewers\obj\Debug\Microsoft.Samples.Kinect.WpfViewers.g.resources
+D:\Kinect Dev\TA Bahasa Isyarat\KinectWpfViewers\obj\Debug\Microsoft.Samples.Kinect.WpfViewers.Properties.Resources.resources
+D:\Kinect Dev\TA Bahasa Isyarat\KinectWpfViewers\obj\Debug\Microsoft.Samples.Kinect.WpfViewers.csproj.GenerateResource.Cache
+D:\Kinect Dev\TA Bahasa Isyarat\KinectWpfViewers\obj\Debug\Microsoft.Samples.Kinect.WpfViewers.dll
+D:\Kinect Dev\TA Bahasa Isyarat\KinectWpfViewers\obj\Debug\Microsoft.Samples.Kinect.WpfViewers.pdb

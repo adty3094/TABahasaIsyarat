@@ -35,9 +35,11 @@ namespace TA_Bahasa_Isyarat
         ClassificationClass cc = new ClassificationClass();
         ClassificationClass cc1 = new ClassificationClass();
         ClassificationClass cc2 = new ClassificationClass();
+        ClassificationClass ccBP = new ClassificationClass();
 
         //etc
         const string path = "..\\..\\..\\DataSet\\";
+        const string pathBP = "..\\..\\..\\DataSet\\BP\\";
         const string imagePath = "..\\..\\..\\IsyaratImage\\";
         private string filename;
         bool result;
@@ -146,14 +148,17 @@ namespace TA_Bahasa_Isyarat
 
         private void InitClassificationClass()
         {
-            string group1path = path + "gol1\\";
-            string group2path = path + "gol2\\";
+            string group1path = path + "gol1-normalize\\";
+            string group2path = path + "gol2-normalize\\";
             DirectoryInfo dirInfo1 = new DirectoryInfo(group1path);
             FileInfo[] files1 = dirInfo1.GetFiles("*.txt");
             DirectoryInfo dirInfo2 = new DirectoryInfo(group2path);
             FileInfo[] files2 = dirInfo2.GetFiles("*.txt");
+            DirectoryInfo dirInfoBP = new DirectoryInfo(pathBP);
+            FileInfo[] filesBP = dirInfoBP.GetFiles("*.txt");
             cc1 = new ClassificationClass();
             cc2 = new ClassificationClass();
+            ccBP = new ClassificationClass();
 
             group1Gesture.Items.Clear();
             foreach(FileInfo f in files1)
@@ -175,6 +180,13 @@ namespace TA_Bahasa_Isyarat
                     cc2.Add(className);
                     group2Gesture.Items.Add(className);
                 }
+            }
+
+            foreach(FileInfo f in filesBP)
+            {
+                string className = f.Name.Split('.')[1];
+                if (ccBP.GetIndex(className) == -1)
+                    ccBP.Add(className);
             }
         }
 
@@ -236,6 +248,7 @@ namespace TA_Bahasa_Isyarat
             if (isNeedReboot)
             {
                 DisableAll();
+                return;
             }
             else if (isHaveBadValue)
                 StatusDetail.Content = "Features Have value out of range ( 0.0 - 1.0 )";
@@ -245,6 +258,7 @@ namespace TA_Bahasa_Isyarat
             }
             else
                 StatusDetail.Content = "Skeleton Lost / Not Found";
+            createButton.IsEnabled = true;
         }
 
         private void Worker_DoWork(object sender, DoWorkEventArgs e)
@@ -440,6 +454,7 @@ namespace TA_Bahasa_Isyarat
 
         private void createButton_click(object sender, RoutedEventArgs e)
         {
+            createButton.IsEnabled = false;
             if(fileName.Text.Length < 3)
             {
                 StatusDetail.Content = "Gesture name must have 3 or more character";
@@ -462,36 +477,42 @@ namespace TA_Bahasa_Isyarat
 
         private void TrainButton_Click(object sender, RoutedEventArgs e)
         {
-           
-            float avgError1 = 0;
-            float avgError2 = 0;
-            NeuralNetwork nn1 = new NeuralNetwork();
-            NeuralNetwork nn2 = new NeuralNetwork();
-            DirectoryInfo info1 = new DirectoryInfo(string.Format("{0}gol1-normalize\\", path));
-            DirectoryInfo info2 = new DirectoryInfo(string.Format("{0}gol2-normalize\\", path));
-            DataSetList dsl1 = new DataSetList();
-            DataSetList dsl2 = new DataSetList();
-            FileReader fr1 = new FileReader();
-            FileReader fr2 = new FileReader();
-            dsl1 = fr1.ReadFile(info1.FullName, cc1);
-            dsl2 = fr2.ReadFile(info2.FullName, cc2);
-            StatusDetail.Content = "Training Dataset";
+            TrainButton.IsEnabled = false;
             if (algorithm.Equals("BP"))
             {
-                nn1.InitNetwork(dsl1[0].AttributeCount, dsl1[0].AttributeCount / 2, cc1.TargetCount);
-                nn2.InitNetwork(dsl2[0].AttributeCount, dsl2[0].AttributeCount / 2, cc2.TargetCount);
-                nn1.Seed = nn2.Seed = 0;
-                nn1.InitWeight();
-                nn2.InitWeight();
-                BackPropagation bp1 = new BackPropagation();
-                BackPropagation bp2 = new BackPropagation();
-                bp1.Init(nn1, dsl1, cc1);
-                bp2.Init(nn2, dsl2, cc2);
-                avgError1 = bp1.Run(Int32.Parse(iteration_text.Text));
-                avgError2 = bp2.Run(Int32.Parse(iteration_text.Text));
+                float avgError = 0;
+                NeuralNetwork nn = new NeuralNetwork();
+                DirectoryInfo info = new DirectoryInfo(pathBP);
+                DataSetList dsl = new DataSetList();
+                FileReader fr = new FileReader();
+                dsl = fr.ReadFile(info.FullName, ccBP);
+                StatusDetail.Content = "Training Dataset";
+                nn.InitNetwork(dsl[0].AttributeCount, dsl[0].AttributeCount / 2, ccBP.TargetCount);
+                nn.Seed = 0;
+                nn.InitWeight();
+                BackPropagation bp = new BackPropagation();
+                bp.Init(nn, dsl, ccBP);
+                avgError = bp.Run(Int32.Parse(iteration_text.Text));
+                NNtoXMLWriter nnw = new NNtoXMLWriter(nn, avgError);
+                nnw.Write("bpnet.xml", algorithm, null);
+
             }
-            else if(algorithm.Equals("BPGA"))
+            else
             {
+                float avgError1 = 0;
+                float avgError2 = 0;
+                NeuralNetwork nn1 = new NeuralNetwork();
+                NeuralNetwork nn2 = new NeuralNetwork();
+                DirectoryInfo info1 = new DirectoryInfo(string.Format("{0}gol1-normalize\\", path));
+                DirectoryInfo info2 = new DirectoryInfo(string.Format("{0}gol2-normalize\\", path));
+                DataSetList dsl1 = new DataSetList();
+                DataSetList dsl2 = new DataSetList();
+                FileReader fr1 = new FileReader();
+                FileReader fr2 = new FileReader();
+                dsl1 = fr1.ReadFile(info1.FullName, cc1);
+                dsl2 = fr2.ReadFile(info2.FullName, cc2);
+                StatusDetail.Content = "Training Dataset";
+
                 GeneticAlgorithm ga1 = new GeneticAlgorithm();
                 GeneticAlgorithm ga2 = new GeneticAlgorithm();
                 ga1.Init(dsl1, cc1);
@@ -510,12 +531,12 @@ namespace TA_Bahasa_Isyarat
                 algoTest = nnr.read("gol2ga.xml");
                 seleksi2 = nnr.chromosom;
 
-                for(int i = 0; i < dsl1.Count; i++)
+                for (int i = 0; i < dsl1.Count; i++)
                 {
                     int popCount = 0;
-                    for(int j = 0; j < seleksi1.Count(); j++)
+                    for (int j = 0; j < seleksi1.Count(); j++)
                     {
-                        if(seleksi1[j] == 0)
+                        if (seleksi1[j] == 0)
                         {
                             dsl1[i].RemoveBit(j - popCount);
                             popCount++;
@@ -548,33 +569,26 @@ namespace TA_Bahasa_Isyarat
                 bp2.Init(nn2, dsl2, cc2);
                 avgError1 = bp1.Run(Int32.Parse(iteration_text.Text));
                 avgError2 = bp2.Run(Int32.Parse(iteration_text.Text));
-            }
 
-            NNtoXMLWriter nnw1 = new NNtoXMLWriter(nn1, avgError1);
-            NNtoXMLWriter nnw2 = new NNtoXMLWriter(nn2, avgError2);
-            if (algorithm.Equals("BP"))
-            {
-                nnw1.Write("gol1.xml", algorithm, null);
-                nnw2.Write("gol2.xml", algorithm, null);
-            }
-            else if(algorithm.Equals("BPGA"))
-            {
+                NNtoXMLWriter nnw1 = new NNtoXMLWriter(nn1, avgError1);
+                NNtoXMLWriter nnw2 = new NNtoXMLWriter(nn2, avgError2);
                 nnw1.Write("gol1ga.xml", algorithm, seleksi1);
                 nnw2.Write("gol2ga.xml", algorithm, seleksi2);
-            }
+                
+                group1Gesture.Items.Clear();
+                group2Gesture.Items.Clear();
 
-            group1Gesture.Items.Clear();
-            group2Gesture.Items.Clear();
-
-            for(int i = 0; i < cc1.GetClassList().Count; i++)
-            {
-                group1Gesture.Items.Add(cc1[i]);
-            }
-            for (int i = 0; i < cc2.GetClassList().Count; i++)
-            {
-                group2Gesture.Items.Add(cc2[i]);
+                for (int i = 0; i < cc1.GetClassList().Count; i++)
+                {
+                    group1Gesture.Items.Add(cc1[i]);
+                }
+                for (int i = 0; i < cc2.GetClassList().Count; i++)
+                {
+                    group2Gesture.Items.Add(cc2[i]);
+                }
             }
             StatusDetail.Content = "Training Finished";
+            TrainButton.IsEnabled = true;
         }
 
         private void TestButton_Click(object sender, RoutedEventArgs e)
@@ -662,20 +676,19 @@ namespace TA_Bahasa_Isyarat
                 fitur.Add((float)SLELWL);
                 fitur.Add((float)ELWLHL);
                 fitur.Add((float)DisHRHL);
-                if (ERWR.Y < 0.53)
+                if (algorithm.Equals("BP"))
                 {
-                    if (algorithm.Equals("BP"))
-                        xmlName = "gol1.xml";
-                    else if (algorithm.Equals("BPGA"))
-                        xmlName = "gol1ga.xml";
+                    xmlName = "bpnet.xml";
+                    gol = 0;
+                }
+                else if (ERWR.Y < 0.53)
+                {
+                    xmlName = "gol1ga.xml";
                     gol = 1;
                 }
                 else
                 {
-                    if (algorithm.Equals("BP"))
-                        xmlName = "gol2.xml";
-                    else if (algorithm.Equals("BPGA"))
-                        xmlName = "gol2ga.xml";
+                    xmlName = "gol2ga.xml";
                     gol = 2;
                 }
                 DataSet ds = new DataSet(fitur.Count);
@@ -689,10 +702,7 @@ namespace TA_Bahasa_Isyarat
                 FeedForward ff = new FeedForward();
                 loadNet = new NeuralNetwork();
                 NNtoXMLReader nnr = new NNtoXMLReader(loadNet);
-                float[] totalSelisih = new float[3];
                 Translate t = new Translate();
-
-                float totalselisihtemp = 0;
 
                 algoTest = nnr.read(xmlName);
                 for (int i = 0; i < dsl.Count; i++)
@@ -722,10 +732,9 @@ namespace TA_Bahasa_Isyarat
                     ff.Run(i);
 
                 t = new Translate(ff.GetActualClass());
-
-                totalSelisih = new float[3];
-
-                if (gol == 1)
+                if (gol == 0)
+                    outputText.Content = t.Result(ccBP);
+                else if (gol == 1)
                     outputText.Content = t.Result(cc1);
                 else if (gol == 2)
                     outputText.Content = t.Result(cc2);
@@ -862,20 +871,20 @@ namespace TA_Bahasa_Isyarat
 
         private void AllFeatureNormalize()
         {
-            SRER = Features.FeatureNorm(SRER);
-            ERWR = Features.FeatureNorm(ERWR);
-            WRHR = Features.FeatureNorm(WRHR);
-            SLEL = Features.FeatureNorm(SLEL);
-            ELWL = Features.FeatureNorm(ELWL);
-            WLHL = Features.FeatureNorm(WLHL);
-            HRHL = Features.FeatureNorm(HRHL);
-            SCSRER /= Math.PI;
-            SRERWR /= Math.PI;
-            ERWRHR /= Math.PI;
-            SCSLEL /= Math.PI;
-            SLELWL /= Math.PI;
-            ELWLHL /= Math.PI;
-            DisHRHL /= 3.4641f;
+            SRER = Features.VectorFeatureNorm(SRER);
+            ERWR = Features.VectorFeatureNorm(ERWR);
+            WRHR = Features.VectorFeatureNorm(WRHR);
+            SLEL = Features.VectorFeatureNorm(SLEL);
+            ELWL = Features.VectorFeatureNorm(ELWL);
+            WLHL = Features.VectorFeatureNorm(WLHL);
+            HRHL = Features.VectorFeatureNorm(HRHL);
+            SCSRER = Features.AngleFeatureNorm(SCSRER);
+            SRERWR = Features.AngleFeatureNorm(SRERWR);
+            ERWRHR = Features.AngleFeatureNorm(ERWRHR);
+            SCSLEL = Features.AngleFeatureNorm(SCSLEL);
+            SLELWL = Features.AngleFeatureNorm(SLELWL);
+            ELWLHL = Features.AngleFeatureNorm(ELWLHL);
+            DisHRHL = Features.DistanceFeatureNorm(DisHRHL);
         }
 
         private void comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -953,6 +962,7 @@ namespace TA_Bahasa_Isyarat
 
         private void OneTestButton_Click(object sender, RoutedEventArgs e)
         {
+            OneTestButton.IsEnabled = false;
             BackgroundWorker oneWorker = new BackgroundWorker();
             oneWorker.WorkerReportsProgress = true;
             oneWorker.DoWork += OneWorker_DoWork;
@@ -1007,20 +1017,19 @@ namespace TA_Bahasa_Isyarat
                     fitur.Add((float)SLELWL);
                     fitur.Add((float)ELWLHL);
                     fitur.Add((float)DisHRHL);
-                    if (ERWR.Y < 0.53)
+                    if (algorithm.Equals("BP"))
                     {
-                        if (algorithm.Equals("BP"))
-                            xmlName = "gol1.xml";
-                        else if (algorithm.Equals("BPGA"))
-                            xmlName = "gol1ga.xml";
+                        xmlName = "bpnet.xml";
+                        gol = 0;
+                    }
+                    else if (ERWR.Y < 0.53)
+                    {
+                        xmlName = "gol1ga.xml";
                         gol = 1;
                     }
                     else
                     {
-                        if (algorithm.Equals("BP"))
-                            xmlName = "gol2.xml";
-                        else if (algorithm.Equals("BPGA"))
-                            xmlName = "gol2ga.xml";
+                        xmlName = "gol2ga.xml";
                         gol = 2;
                     }
                     DataSet ds = new DataSet(fitur.Count);
@@ -1053,7 +1062,6 @@ namespace TA_Bahasa_Isyarat
                         }
                     }
 
-
                     loadNet = new NeuralNetwork();
                     nnr = new NNtoXMLReader(loadNet);
                     nnr.read(xmlName);
@@ -1070,8 +1078,9 @@ namespace TA_Bahasa_Isyarat
                     string actualClassLog = "";
                     for(int i = 0; i < actualClass.Length; i++)
                         actualClassLog += actualClass[i];
-
-                    if (gol == 1)
+                    if (gol == 0)
+                        outputText.Content = t.Result(ccBP);
+                    else if (gol == 1)
                         outputText.Content = t.Result(cc1);
                     else if (gol == 2)
                         outputText.Content = t.Result(cc2);
@@ -1093,6 +1102,7 @@ namespace TA_Bahasa_Isyarat
             }
             else
                 StatusDetail.Content = "Skeleton Lost / Not Found";
+            OneTestButton.IsEnabled = true;
         }
 
         private void OneWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
