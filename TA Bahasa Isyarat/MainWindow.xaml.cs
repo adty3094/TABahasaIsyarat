@@ -137,7 +137,7 @@ namespace TA_Bahasa_Isyarat
                     kinectManager.DepthStreamEnabled = true;
                     kinectManager.ElevationAngle = KinectDefaultAngle;
                     ColorView.KinectSensorManager =
-                        SkeletonView.KinectSensorManager = kinectManager;
+                        SkeletonView.KinectSensorManager = kinectManager;         
                     StatusDetail.Content = "Idle";
                     mainSensor.AllFramesReady += MainSensor_AllFramesReady;
                     InitClassificationClass();

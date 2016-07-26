@@ -9,8 +9,8 @@
         Title="MainWindow" Height="774.5" Width="1063" Loaded="Window_Loaded" Closed="Window_Closed">
     <Grid Margin="0,0,2,0">
 
-        <WpfViewers:KinectColorViewer x:Name="ColorView" HorizontalAlignment="Left" Height="480" Margin="10,10,0,0" VerticalAlignment="Top" Width="640"/>
-        <WpfViewers:KinectSkeletonViewer x:Name="SkeletonView" HorizontalAlignment="Left" Height="480" Margin="10,10,0,0" VerticalAlignment="Top" Width="640"/>
+        <WpfViewers:KinectColorViewer x:Name="ColorView" HorizontalAlignment="Left" Height="480" Margin="10,10,0,0" VerticalAlignment="Top" Width="640" FlipHorizontally="True"/>
+        <WpfViewers:KinectSkeletonViewer x:Name="SkeletonView" HorizontalAlignment="Left" Height="480" Margin="10,10,0,0" VerticalAlignment="Top" Width="640" FlowDirection="RightToLeft"/>
         <Label x:Name="StatusDetail" Content="asd" HorizontalAlignment="Left" Height="47" Margin="109,686,0,0" VerticalAlignment="Top" Width="689" FontSize="24"/>
         <Label x:Name="label1" Content="Status:" HorizontalAlignment="Left" Margin="10,686,0,0" VerticalAlignment="Top" Width="100" FontSize="24" Height="47"/>
         <Label x:Name="label1_Copy" Content="Create New Gesture" HorizontalAlignment="Left" Margin="29,506,0,0" VerticalAlignment="Top" Width="152" FontSize="16"/>
